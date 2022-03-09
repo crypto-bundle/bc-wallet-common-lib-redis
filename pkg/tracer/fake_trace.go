@@ -42,5 +42,5 @@ func Trace(ctx context.Context, opts ...spanWithContextOptionModifier) (
 	Span,
 	finishCallback,
 ) {
-	return nil, Span{}, finish
+	return ctx, Span{}, finish
 }
