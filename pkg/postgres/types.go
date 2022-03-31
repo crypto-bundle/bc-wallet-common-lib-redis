@@ -1,17 +1,17 @@
 package postgres
 
 type DbConfig interface {
-	GetHost() string
-	GetPort() uint16
+	GetDbHost() string
+	GetDbPort() uint16
 	GetDbName() string
-	GetUser() string
-	GetPassword() string
-	GetTLSMode() string
-	GetRetryCount() uint8
-	GetConnectTimeOut() uint16
+	GetDbUser() string
+	GetDbPassword() string
+	GetDbTLSMode() string
+	GetDbRetryCount() uint8
+	GetDbConnectTimeOut() uint16
 
-	GetMaxOpenConns() uint8
-	GetMaxIdleConns() uint8
+	GetDbMaxOpenConns() uint8
+	GetDbMaxIdleConns() uint8
 
 	IsDebug() bool
 }

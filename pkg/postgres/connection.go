@@ -47,7 +47,7 @@ func (c *Connection) Close() error {
 	return nil
 }
 
-// Connect to Clickhouse database
+// Connect to postgres database
 func (c *Connection) Connect() (*Connection, error) {
 	retryDecValue := uint8(1)
 	retryCount := c.params.retryCount
@@ -114,21 +114,21 @@ func (c *Connection) Connect() (*Connection, error) {
 func NewConnection(ctx context.Context, cfg DbConfig, logger *zap.Logger) *Connection {
 	conn := &Connection{
 		params: &connectionParams{
-			host:     cfg.GetHost(),
-			port:     cfg.GetPort(),
-			user:     cfg.GetUser(),
-			password: cfg.GetPassword(),
+			host:     cfg.GetDbHost(),
+			port:     cfg.GetDbPort(),
+			user:     cfg.GetDbUser(),
+			password: cfg.GetDbPassword(),
 			database: cfg.GetDbName(),
 
-			retryCount:   cfg.GetRetryCount(),
-			retryTimeOut: time.Duration(cfg.GetConnectTimeOut()) * time.Millisecond,
+			retryCount:   cfg.GetDbRetryCount(),
+			retryTimeOut: time.Duration(cfg.GetDbConnectTimeOut()) * time.Millisecond,
 
-			maxOpenConn: cfg.GetMaxOpenConns(),
-			maxIdleConn: cfg.GetMaxIdleConns(),
+			maxOpenConn: cfg.GetDbMaxOpenConns(),
+			maxIdleConn: cfg.GetDbMaxIdleConns(),
 
 			debug: cfg.IsDebug(),
 
-			sslMode: cfg.GetTLSMode(),
+			sslMode: cfg.GetDbTLSMode(),
 		},
 		l: logger,
 	}
