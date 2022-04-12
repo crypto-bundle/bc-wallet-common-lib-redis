@@ -1,14 +1,17 @@
-module github.com/crypto-bundle/bc-wallet-common
+module github.com/cryptowize-tech/bc-wallet-common
 
 go 1.17
 
 require (
+	github.com/caarlos0/env/v6 v6.9.1
 	github.com/go-redis/redis/v8 v8.11.5
+	github.com/golang/protobuf v1.5.2
 	github.com/hashicorp/vault/api v1.4.1
 	github.com/hashicorp/vault/api/auth/userpass v0.1.0
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lib/pq v1.10.4
+	github.com/nats-io/nats.go v1.14.0
 	go.uber.org/zap v1.21.0
 )
 
@@ -20,7 +23,6 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fatih/color v1.7.0 // indirect
-	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
@@ -47,6 +49,8 @@ require (
 	github.com/mitchellh/go-testing-interface v1.0.0 // indirect
 	github.com/mitchellh/mapstructure v1.4.2 // indirect
 	github.com/mitchellh/reflectwalk v1.0.0 // indirect
+	github.com/nats-io/nkeys v0.3.0 // indirect
+	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/oklog/run v1.0.0 // indirect
 	github.com/pierrec/lz4 v2.5.2+incompatible // indirect
 	github.com/ryanuber/go-glob v1.0.0 // indirect
