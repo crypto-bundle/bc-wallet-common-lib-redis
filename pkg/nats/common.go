@@ -10,8 +10,6 @@ import (
 type configParams interface {
 	GetNatsAddresses() []string
 	GetNatsJoinedAddresses() string
-	//GetNatsHost() string
-	//GetNatsPort() uint16
 	GetNatsUser() string
 	GetNatsPassword() string
 	IsRetryOnConnectionFailed() bool
