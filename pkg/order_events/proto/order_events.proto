@@ -26,11 +26,12 @@ message Order {
 }
 
 message OrderEvent {
-  uint32 NetworkIdentifier = 1;
-  uint32 ProviderIdentifier = 2;
-  string MerchantIdentifier = 3;
-  string OrderIdentifier = 4;
-  string Type = 5;
-  uint32 Producer = 6;
-  Order OrderInfo = 7;
+  string EventIdentity = 1;
+  uint32 NetworkIdentifier = 2;
+  uint32 ProviderIdentifier = 3;
+  string MerchantIdentifier = 4;
+  string OrderIdentifier = 5;
+  string Type = 6;
+  uint32 Producer = 7;
+  Order OrderInfo = 8;
 }

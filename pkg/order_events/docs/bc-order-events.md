@@ -53,6 +53,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| EventIdentity | [string](#string) |  |  |
 | NetworkIdentifier | [uint32](#uint32) |  |  |
 | ProviderIdentifier | [uint32](#uint32) |  |  |
 | MerchantIdentifier | [string](#string) |  |  |
