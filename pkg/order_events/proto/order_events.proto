@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package order_events;
+
+option go_package = "github.com/cryptowize-tech/bc-wallet-common/pkg/order_events";
+
+message OrderIdentity {
+  string UUID = 1;
+  string ExternalOrderUUID = 2;
+  string ProviderOrderUUID = 3;
+}
+
+message Order {
+  OrderIdentity OrderIdentity = 1;
+  uint32 Type = 2;
+  uint32 Status = 3;
+  uint32 NetworkIdentifier = 4;
+  uint32 ProviderIdentifier = 5;
+  string MerchantIdentifier = 6;
+  string BcTxIdentifier = 7;
+  uint32 Vout = 8;
+  uint64 Amount = 9;
+  uint64 RealFee = 10;
+  uint64 EstimationFee = 11;
+  string EstimationFeeIdentifier = 12;
+}
+
+message OrderEvent {
+  uint32 NetworkIdentifier = 1;
+  uint32 ProviderIdentifier = 2;
+  string MerchantIdentifier = 3;
+  string OrderIdentifier = 4;
+  string Type = 5;
+  uint32 Producer = 6;
+  Order OrderInfo = 7;
+}
