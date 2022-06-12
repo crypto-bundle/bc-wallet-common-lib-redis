@@ -39,6 +39,9 @@
 | RealFee | [uint64](#uint64) |  |  |
 | EstimationFee | [uint64](#uint64) |  |  |
 | EstimationFeeIdentifier | [string](#string) |  |  |
+| WalletIdentifier | [string](#string) |  |  |
+| AddressIdentifier | [string](#string) |  |  |
+| Currency | [string](#string) |  |  |
 
 
 

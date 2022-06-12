@@ -23,6 +23,9 @@ message Order {
   uint64 RealFee = 10;
   uint64 EstimationFee = 11;
   string EstimationFeeIdentifier = 12;
+  string WalletIdentifier = 13;
+  string AddressIdentifier = 14;
+  string Currency = 15;
 }
 
 message OrderEvent {
