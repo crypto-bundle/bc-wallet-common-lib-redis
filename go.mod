@@ -13,6 +13,7 @@ require (
 	github.com/lib/pq v1.10.4
 	github.com/nats-io/nats.go v1.14.0
 	go.uber.org/zap v1.21.0
+	google.golang.org/protobuf v1.26.0
 )
 
 require (
@@ -63,6 +64,5 @@ require (
 	golang.org/x/time v0.0.0-20200416051211-89c76fbcd5d1 // indirect
 	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013 // indirect
 	google.golang.org/grpc v1.41.0 // indirect
-	google.golang.org/protobuf v1.26.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.5.1 // indirect
 )
