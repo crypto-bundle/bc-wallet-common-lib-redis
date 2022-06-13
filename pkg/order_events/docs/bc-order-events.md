@@ -8,6 +8,7 @@
     - [OrderEvent](#order_events.OrderEvent)
     - [OrderIdentity](#order_events.OrderIdentity)
   
+    - [OrderStatus](#order_events.OrderStatus)
     - [OrderType](#order_events.OrderType)
   
 - [Scalar Value Types](#scalar-value-types)
@@ -31,7 +32,7 @@
 | ----- | ---- | ----- | ----------- |
 | OrderIdentity | [OrderIdentity](#order_events.OrderIdentity) |  |  |
 | Type | [OrderType](#order_events.OrderType) |  |  |
-| Status | [uint32](#uint32) |  |  |
+| Status | [OrderStatus](#order_events.OrderStatus) |  |  |
 | NetworkIdentifier | [uint32](#uint32) |  |  |
 | ProviderIdentifier | [uint32](#uint32) |  |  |
 | MerchantIdentifier | [string](#string) |  |  |
@@ -90,6 +91,23 @@
 
 
  
+
+
+<a name="order_events.OrderStatus"></a>
+
+### OrderStatus
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| PLACEHOLDER | 0 |  |
+| NEW | 1 |  |
+| PROCESSING | 2 |  |
+| CONFIRMED | 3 |  |
+| FAILED | 4 |  |
+| SUCCESS | 5 |  |
+| CANCELED | 6 |  |
+
 
 
 <a name="order_events.OrderType"></a>

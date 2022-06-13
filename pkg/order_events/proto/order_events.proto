@@ -9,6 +9,17 @@ enum OrderType {
   DEPOSIT = 1;
 }
 
+enum OrderStatus {
+  PLACEHOLDER = 0;
+  NEW = 1;
+  PROCESSING = 2;
+  CONFIRMED = 3;
+  FAILED = 4;
+  SUCCESS = 5;
+  CANCELED = 6;
+}
+
+
 message OrderIdentity {
   string UUID = 1;
   string ExternalOrderUUID = 2;
@@ -18,7 +29,7 @@ message OrderIdentity {
 message Order {
   OrderIdentity OrderIdentity = 1;
   OrderType Type = 2;
-  uint32 Status = 3;
+  OrderStatus Status = 3;
   uint32 NetworkIdentifier = 4;
   uint32 ProviderIdentifier = 5;
   string MerchantIdentifier = 6;
