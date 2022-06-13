@@ -26,14 +26,18 @@ message OrderIdentity {
   string ProviderOrderUUID = 3;
 }
 
+message BcTxIdentity {
+  string TxID = 1;
+  uint32 Vout = 2;
+}
+
 message Order {
-  OrderIdentity OrderIdentity = 1;
+  OrderIdentity OrderIdentifier = 1;
   OrderType Type = 2;
   OrderStatus Status = 3;
   uint32 NetworkIdentifier = 4;
   uint32 ProviderIdentifier = 5;
   string MerchantIdentifier = 6;
-  string BcTxIdentifier = 7;
   uint32 Vout = 8;
   uint64 Amount = 9;
   uint64 RealFee = 10;
@@ -42,6 +46,7 @@ message Order {
   string WalletIdentifier = 13;
   string AddressIdentifier = 14;
   string Currency = 15;
+  repeated BcTxIdentity BcTxIdentifier = 7;
 }
 
 message OrderEvent {

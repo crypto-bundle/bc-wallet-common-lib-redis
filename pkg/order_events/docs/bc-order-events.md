@@ -4,6 +4,7 @@
 ## Table of Contents
 
 - [order_events.proto](#order_events.proto)
+    - [BcTxIdentity](#order_events.BcTxIdentity)
     - [Order](#order_events.Order)
     - [OrderEvent](#order_events.OrderEvent)
     - [OrderIdentity](#order_events.OrderIdentity)
@@ -22,6 +23,22 @@
 
 
 
+<a name="order_events.BcTxIdentity"></a>
+
+### BcTxIdentity
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| TxID | [string](#string) |  |  |
+| Vout | [uint32](#uint32) |  |  |
+
+
+
+
+
+
 <a name="order_events.Order"></a>
 
 ### Order
@@ -30,13 +47,12 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| OrderIdentity | [OrderIdentity](#order_events.OrderIdentity) |  |  |
+| OrderIdentifier | [OrderIdentity](#order_events.OrderIdentity) |  |  |
 | Type | [OrderType](#order_events.OrderType) |  |  |
 | Status | [OrderStatus](#order_events.OrderStatus) |  |  |
 | NetworkIdentifier | [uint32](#uint32) |  |  |
 | ProviderIdentifier | [uint32](#uint32) |  |  |
 | MerchantIdentifier | [string](#string) |  |  |
-| BcTxIdentifier | [string](#string) |  |  |
 | Vout | [uint32](#uint32) |  |  |
 | Amount | [uint64](#uint64) |  |  |
 | RealFee | [uint64](#uint64) |  |  |
@@ -45,6 +61,7 @@
 | WalletIdentifier | [string](#string) |  |  |
 | AddressIdentifier | [string](#string) |  |  |
 | Currency | [string](#string) |  |  |
+| BcTxIdentifier | [BcTxIdentity](#order_events.BcTxIdentity) | repeated |  |
 
 
 
