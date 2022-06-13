@@ -53,7 +53,6 @@
 | NetworkIdentifier | [uint32](#uint32) |  |  |
 | ProviderIdentifier | [uint32](#uint32) |  |  |
 | MerchantIdentifier | [string](#string) |  |  |
-| Vout | [uint32](#uint32) |  |  |
 | Amount | [uint64](#uint64) |  |  |
 | RealFee | [uint64](#uint64) |  |  |
 | EstimationFee | [uint64](#uint64) |  |  |
@@ -117,7 +116,7 @@
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| PLACEHOLDER | 0 |  |
+| PLACEHOLDER_ORDER_STATUS | 0 |  |
 | NEW | 1 |  |
 | PROCESSING | 2 |  |
 | CONFIRMED | 3 |  |
@@ -134,8 +133,9 @@
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| WITHDRAW | 0 |  |
-| DEPOSIT | 1 |  |
+| PLACEHOLDER_ORDER_TYPE | 0 |  |
+| WITHDRAW | 1 |  |
+| DEPOSIT | 2 |  |
 
 
  

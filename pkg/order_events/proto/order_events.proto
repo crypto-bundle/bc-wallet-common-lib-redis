@@ -5,12 +5,13 @@ package order_events;
 option go_package = "github.com/cryptowize-tech/bc-wallet-common/pkg/order_events";
 
 enum OrderType {
-  WITHDRAW = 0;
-  DEPOSIT = 1;
+  PLACEHOLDER_ORDER_TYPE = 0;
+  WITHDRAW = 1;
+  DEPOSIT = 2;
 }
 
 enum OrderStatus {
-  PLACEHOLDER = 0;
+  PLACEHOLDER_ORDER_STATUS = 0;
   NEW = 1;
   PROCESSING = 2;
   CONFIRMED = 3;
@@ -38,7 +39,6 @@ message Order {
   uint32 NetworkIdentifier = 4;
   uint32 ProviderIdentifier = 5;
   string MerchantIdentifier = 6;
-  uint32 Vout = 8;
   uint64 Amount = 9;
   uint64 RealFee = 10;
   uint64 EstimationFee = 11;
