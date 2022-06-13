@@ -62,7 +62,7 @@
 | MerchantIdentifier | [string](#string) |  |  |
 | OrderIdentifier | [string](#string) |  |  |
 | Type | [string](#string) |  |  |
-| Producer | [uint32](#uint32) |  |  |
+| Producer | [string](#string) |  |  |
 | OrderInfo | [Order](#order_events.Order) |  |  |
 
 
