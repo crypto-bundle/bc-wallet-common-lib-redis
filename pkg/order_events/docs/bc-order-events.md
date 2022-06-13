@@ -8,6 +8,8 @@
     - [OrderEvent](#order_events.OrderEvent)
     - [OrderIdentity](#order_events.OrderIdentity)
   
+    - [OrderType](#order_events.OrderType)
+  
 - [Scalar Value Types](#scalar-value-types)
 
 
@@ -28,7 +30,7 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | OrderIdentity | [OrderIdentity](#order_events.OrderIdentity) |  |  |
-| Type | [uint32](#uint32) |  |  |
+| Type | [OrderType](#order_events.OrderType) |  |  |
 | Status | [uint32](#uint32) |  |  |
 | NetworkIdentifier | [uint32](#uint32) |  |  |
 | ProviderIdentifier | [uint32](#uint32) |  |  |
@@ -88,6 +90,18 @@
 
 
  
+
+
+<a name="order_events.OrderType"></a>
+
+### OrderType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| WITHDRAW | 0 |  |
+| DEPOSIT | 1 |  |
+
 
  
 

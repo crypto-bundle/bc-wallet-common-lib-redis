@@ -4,6 +4,11 @@ package order_events;
 
 option go_package = "github.com/cryptowize-tech/bc-wallet-common/pkg/order_events";
 
+enum OrderType {
+  WITHDRAW = 0;
+  DEPOSIT = 1;
+}
+
 message OrderIdentity {
   string UUID = 1;
   string ExternalOrderUUID = 2;
@@ -12,7 +17,7 @@ message OrderIdentity {
 
 message Order {
   OrderIdentity OrderIdentity = 1;
-  uint32 Type = 2;
+  OrderType Type = 2;
   uint32 Status = 3;
   uint32 NetworkIdentifier = 4;
   uint32 ProviderIdentifier = 5;
