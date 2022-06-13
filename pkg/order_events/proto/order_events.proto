@@ -35,6 +35,6 @@ message OrderEvent {
   string MerchantIdentifier = 4;
   string OrderIdentifier = 5;
   string Type = 6;
-  uint32 Producer = 7;
+  string Producer = 7;
   Order OrderInfo = 8;
 }
