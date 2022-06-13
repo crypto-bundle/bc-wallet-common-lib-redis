@@ -32,23 +32,6 @@ func (wp *ProducerWorkerPool) Init(ctx context.Context) error {
 		return ErrReturnedNilStreamInfo
 	}
 
-	//addStreamErr := wp.natsProducerConn.DeleteStream(wp.streamName)
-	//if addStreamErr != nil {
-	//	return addStreamErr
-	//}
-
-	if len(streamInfo.Config.Subjects) != len(wp.subject) {
-		oldConf := streamInfo.Config
-		oldConf.Subjects = append(wp.subject, oldConf.Subjects...)
-
-		stream, addStreamErr := wp.natsProducerConn.UpdateStream(&oldConf)
-		if addStreamErr != nil {
-			return addStreamErr
-		}
-
-		streamInfo = stream
-	}
-
 	for i, _ := range wp.workers {
 		wp.workers[i].SetStreamInfo(streamInfo)
 	}
