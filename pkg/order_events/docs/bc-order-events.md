@@ -63,6 +63,7 @@
 | OrderIdentifier | [string](#string) |  |  |
 | Type | [string](#string) |  |  |
 | Producer | [string](#string) |  |  |
+| Message | [string](#string) |  |  |
 | OrderInfo | [Order](#order_events.Order) |  |  |
 
 

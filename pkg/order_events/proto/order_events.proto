@@ -36,5 +36,6 @@ message OrderEvent {
   string OrderIdentifier = 5;
   string Type = 6;
   string Producer = 7;
-  Order OrderInfo = 8;
+  string Message = 8;
+  Order OrderInfo = 9;
 }
