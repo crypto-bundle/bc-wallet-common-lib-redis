@@ -27,9 +27,23 @@ message OrderIdentity {
   string ProviderOrderUUID = 3;
 }
 
+enum BcTxStatus {
+  PLACEHOLDER_BC_TX_STATUS = 0;
+  BC_TX_IN_MINING = 1;
+  BC_TX_SUCCESS = 2;
+  BC_TX_EXECUTION_FAILED = 3;
+}
+
 message BcTxIdentity {
   string TxID = 1;
   uint32 Vout = 2;
+}
+
+message BcTxInfo {
+  BcTxIdentity BcTxIdentifier = 1;
+  uint64 Confirmations = 3;
+  uint64 BlockNumber = 4;
+  BcTxStatus Status = 5;
 }
 
 message Order {
@@ -39,14 +53,14 @@ message Order {
   uint32 NetworkIdentifier = 4;
   uint32 ProviderIdentifier = 5;
   string MerchantIdentifier = 6;
-  uint64 Amount = 9;
-  uint64 RealFee = 10;
-  uint64 EstimationFee = 11;
-  string EstimationFeeIdentifier = 12;
-  string WalletIdentifier = 13;
-  string AddressIdentifier = 14;
-  string Currency = 15;
-  repeated BcTxIdentity BcTxIdentifier = 7;
+  uint64 Amount = 7;
+  uint64 RealFee = 8;
+  uint64 EstimationFee = 9;
+  string EstimationFeeIdentifier = 10;
+  string WalletIdentifier = 11;
+  string AddressIdentifier = 12;
+  string Currency = 13;
+  repeated BcTxInfo BcTx = 14;
 }
 
 message OrderEvent {

@@ -5,10 +5,12 @@
 
 - [order_events.proto](#order_events.proto)
     - [BcTxIdentity](#order_events.BcTxIdentity)
+    - [BcTxInfo](#order_events.BcTxInfo)
     - [Order](#order_events.Order)
     - [OrderEvent](#order_events.OrderEvent)
     - [OrderIdentity](#order_events.OrderIdentity)
   
+    - [BcTxStatus](#order_events.BcTxStatus)
     - [OrderStatus](#order_events.OrderStatus)
     - [OrderType](#order_events.OrderType)
   
@@ -39,6 +41,24 @@
 
 
 
+<a name="order_events.BcTxInfo"></a>
+
+### BcTxInfo
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| BcTxIdentifier | [BcTxIdentity](#order_events.BcTxIdentity) |  |  |
+| Confirmations | [uint64](#uint64) |  |  |
+| BlockNumber | [uint64](#uint64) |  |  |
+| Status | [BcTxStatus](#order_events.BcTxStatus) |  |  |
+
+
+
+
+
+
 <a name="order_events.Order"></a>
 
 ### Order
@@ -60,7 +80,7 @@
 | WalletIdentifier | [string](#string) |  |  |
 | AddressIdentifier | [string](#string) |  |  |
 | Currency | [string](#string) |  |  |
-| BcTxIdentifier | [BcTxIdentity](#order_events.BcTxIdentity) | repeated |  |
+| BcTx | [BcTxInfo](#order_events.BcTxInfo) | repeated |  |
 
 
 
@@ -107,6 +127,20 @@
 
 
  
+
+
+<a name="order_events.BcTxStatus"></a>
+
+### BcTxStatus
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| PLACEHOLDER_BC_TX_STATUS | 0 |  |
+| BC_TX_IN_MINING | 1 |  |
+| BC_TX_SUCCESS | 2 |  |
+| BC_TX_EXECUTION_FAILED | 3 |  |
+
 
 
 <a name="order_events.OrderStatus"></a>
