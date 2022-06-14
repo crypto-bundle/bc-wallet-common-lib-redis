@@ -23,7 +23,7 @@ type ProducerWorkerPool struct {
 }
 
 func (wp *ProducerWorkerPool) Init(ctx context.Context) error {
-	streamInfo, err := wp.getOrCreateStream(ctx)
+	streamInfo, err := wp.getStreamInfo(ctx)
 	if err != nil {
 		return err
 	}
@@ -39,16 +39,11 @@ func (wp *ProducerWorkerPool) Init(ctx context.Context) error {
 	return nil
 }
 
-func (wp *ProducerWorkerPool) getOrCreateStream(ctx context.Context) (*nats.StreamInfo, error) {
+func (wp *ProducerWorkerPool) getStreamInfo(ctx context.Context) (*nats.StreamInfo, error) {
 	streamInfo, err := wp.natsProducerConn.StreamInfo(wp.jsConfig.Name)
 	if err != nil {
 		if errors.Is(err, nats.ErrStreamNotFound) {
-			stream, addStreamErr := wp.natsProducerConn.AddStream(wp.jsConfig)
-			if addStreamErr != nil {
-				return nil, addStreamErr
-			}
-
-			streamInfo = stream
+			wp.logger.Error("stream not found", zap.Error(err))
 		}
 
 		return nil, err
