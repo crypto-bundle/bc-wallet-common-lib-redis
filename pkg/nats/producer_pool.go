@@ -76,6 +76,10 @@ func (wp *ProducerWorkerPool) Produce(ctx context.Context, msg *nats.Msg) {
 	wp.msgChannel <- msg
 }
 
+func (wp *ProducerWorkerPool) ProduceSync(ctx context.Context, msg *nats.Msg) error {
+	return wp.workers[0].PublishMsg(msg)
+}
+
 func NewProducerWorkersPool(
 	logger *zap.Logger,
 	workersCount uint16,
