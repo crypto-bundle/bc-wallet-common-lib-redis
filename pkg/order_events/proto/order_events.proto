@@ -44,6 +44,7 @@ message BcTxInfo {
   uint64 Confirmations = 3;
   uint64 BlockNumber = 4;
   BcTxStatus Status = 5;
+  string ExplorerURL = 6;
 }
 
 message Order {

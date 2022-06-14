@@ -53,6 +53,7 @@
 | Confirmations | [uint64](#uint64) |  |  |
 | BlockNumber | [uint64](#uint64) |  |  |
 | Status | [BcTxStatus](#order_events.BcTxStatus) |  |  |
+| ExplorerURL | [string](#string) |  |  |
 
 
 
