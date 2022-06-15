@@ -30,12 +30,12 @@ func (c *Config) GetKey() (*rsa.PrivateKey, error) {
 
 	keyBlock, _ := pem.Decode(key)
 	if keyBlock == nil {
-		return nil, fmt.Errorf("fail to get idrsa, invalid key")
+		return nil, ErrInvalidKey
 	}
 
 	privateKey, err := x509.ParsePKCS1PrivateKey(keyBlock.Bytes)
 	if err != nil {
-		return nil, fmt.Errorf("fail to get idrsa, %s", err.Error())
+		return nil, fmt.Errorf("%w: %q", ErrParsePK, err.Error())
 	}
 
 	return privateKey, nil
