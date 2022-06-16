@@ -26,7 +26,7 @@ func (c *Connection) BeginTx() (*sqlx.Tx, error) {
 
 // BeginTxWithUnlessCommittedRollback ....
 func (c *Connection) BeginTxWithUnlessCommittedRollback(ctx context.Context,
-	callback txStmtCallback,
+	callback func(txStmtCtx context.Context) error,
 ) error {
 	txStmt, err := c.Dbx.Beginx()
 	if err != nil {
