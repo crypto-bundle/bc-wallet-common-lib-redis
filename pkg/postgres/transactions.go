@@ -40,6 +40,8 @@ func (c *Connection) BeginTxWithUnlessCommittedRollback(ctx context.Context,
 		if rollbackErr != nil {
 			return rollbackErr
 		}
+
+		return err
 	}
 
 	err = txStmt.Commit()
