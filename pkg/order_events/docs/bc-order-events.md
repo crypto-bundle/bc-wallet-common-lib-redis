@@ -152,12 +152,13 @@
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | PLACEHOLDER_ORDER_STATUS | 0 |  |
-| NEW | 1 |  |
-| PROCESSING | 2 |  |
-| CONFIRMED | 3 |  |
-| FAILED | 4 |  |
-| SUCCESS | 5 |  |
-| CANCELED | 6 |  |
+| ACCEPTED | 1 |  |
+| CREATED | 2 |  |
+| PROCESSING | 3 |  |
+| CONFIRMED | 4 |  |
+| FAILED | 5 |  |
+| SUCCESS | 6 |  |
+| CANCELED | 7 |  |
 
 
 

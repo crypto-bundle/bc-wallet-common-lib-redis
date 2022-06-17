@@ -4,7 +4,8 @@ type EventType uint8
 
 const (
 	EventTypeDefault EventType = iota + 1
-	EventTypeNewOrder
+	EventTypeOrderAccepted
+	EventTypeOrderCreated
 	EventTypeCancelOrder
 	EventTypeOrderFailed
 	EventTypeBcTxFound
@@ -14,7 +15,8 @@ const (
 
 const (
 	EventTypeDefaultName                    = "event_default"
-	EventTypeNewOrderName                   = "event_new_order"
+	EventTypeAcceptedOrderName              = "event_order_accepted"
+	EventTypeCreatedOrderName               = "event_order_created"
 	EventTypeCancelOrderName                = "event_cancel_order"
 	EventTypeOrderFailedName                = "event_order_failed"
 	EventTypeBcTxFoundName                  = "event_bc_tx_found"
@@ -25,7 +27,8 @@ const (
 func (d EventType) String() string {
 	return [...]string{"",
 		EventTypeDefaultName,
-		EventTypeNewOrderName,
+		EventTypeAcceptedOrderName,
+		EventTypeCreatedOrderName,
 		EventTypeCancelOrderName,
 		EventTypeOrderFailedName,
 		EventTypeBcTxFoundName,
