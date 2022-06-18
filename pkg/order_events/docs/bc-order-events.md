@@ -6,6 +6,7 @@
 - [order_events.proto](#order_events.proto)
     - [BcTxIdentity](#order_events.BcTxIdentity)
     - [BcTxInfo](#order_events.BcTxInfo)
+    - [BcTxOperation](#order_events.BcTxOperation)
     - [Order](#order_events.Order)
     - [OrderEvent](#order_events.OrderEvent)
     - [OrderIdentity](#order_events.OrderIdentity)
@@ -34,7 +35,7 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | TxID | [string](#string) |  |  |
-| Vout | [uint32](#uint32) |  |  |
+| Meta | [bytes](#bytes) |  |  |
 
 
 
@@ -52,8 +53,27 @@
 | BcTxIdentifier | [BcTxIdentity](#order_events.BcTxIdentity) |  |  |
 | Confirmations | [uint64](#uint64) |  |  |
 | BlockNumber | [uint64](#uint64) |  |  |
+| Operations | [BcTxOperation](#order_events.BcTxOperation) | repeated |  |
 | Status | [BcTxStatus](#order_events.BcTxStatus) |  |  |
+| RealFee | [uint64](#uint64) |  |  |
 | ExplorerURL | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="order_events.BcTxOperation"></a>
+
+### BcTxOperation
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Index | [uint32](#uint32) |  |  |
+| Address | [string](#string) |  |  |
+| Amount | [uint64](#uint64) |  |  |
 
 
 

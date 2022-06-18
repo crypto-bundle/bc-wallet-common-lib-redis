@@ -37,15 +37,23 @@ enum BcTxStatus {
 
 message BcTxIdentity {
   string TxID = 1;
-  uint32 Vout = 2;
+  bytes Meta = 2;
+}
+
+message BcTxOperation {
+  uint32 Index = 1;
+  string Address = 2;
+  uint64 Amount = 4;
 }
 
 message BcTxInfo {
   BcTxIdentity BcTxIdentifier = 1;
-  uint64 Confirmations = 3;
-  uint64 BlockNumber = 4;
+  uint64 Confirmations = 2;
+  uint64 BlockNumber = 3;
+  repeated BcTxOperation Operations = 4;
   BcTxStatus Status = 5;
-  string ExplorerURL = 6;
+  uint64 RealFee = 6;
+  string ExplorerURL = 7;
 }
 
 message Order {

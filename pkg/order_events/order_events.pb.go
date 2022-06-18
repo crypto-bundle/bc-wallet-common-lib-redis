@@ -254,7 +254,7 @@ type BcTxIdentity struct {
 	unknownFields protoimpl.UnknownFields
 
 	TxID string `protobuf:"bytes,1,opt,name=TxID,proto3" json:"TxID,omitempty"`
-	Vout uint32 `protobuf:"varint,2,opt,name=Vout,proto3" json:"Vout,omitempty"`
+	Meta []byte `protobuf:"bytes,2,opt,name=Meta,proto3" json:"Meta,omitempty"`
 }
 
 func (x *BcTxIdentity) Reset() {
@@ -296,9 +296,72 @@ func (x *BcTxIdentity) GetTxID() string {
 	return ""
 }
 
-func (x *BcTxIdentity) GetVout() uint32 {
+func (x *BcTxIdentity) GetMeta() []byte {
 	if x != nil {
-		return x.Vout
+		return x.Meta
+	}
+	return nil
+}
+
+type BcTxOperation struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Index   uint32 `protobuf:"varint,1,opt,name=Index,proto3" json:"Index,omitempty"`
+	Address string `protobuf:"bytes,2,opt,name=Address,proto3" json:"Address,omitempty"`
+	Amount  uint64 `protobuf:"varint,4,opt,name=Amount,proto3" json:"Amount,omitempty"`
+}
+
+func (x *BcTxOperation) Reset() {
+	*x = BcTxOperation{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_order_events_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *BcTxOperation) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BcTxOperation) ProtoMessage() {}
+
+func (x *BcTxOperation) ProtoReflect() protoreflect.Message {
+	mi := &file_order_events_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BcTxOperation.ProtoReflect.Descriptor instead.
+func (*BcTxOperation) Descriptor() ([]byte, []int) {
+	return file_order_events_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *BcTxOperation) GetIndex() uint32 {
+	if x != nil {
+		return x.Index
+	}
+	return 0
+}
+
+func (x *BcTxOperation) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+func (x *BcTxOperation) GetAmount() uint64 {
+	if x != nil {
+		return x.Amount
 	}
 	return 0
 }
@@ -308,17 +371,19 @@ type BcTxInfo struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	BcTxIdentifier *BcTxIdentity `protobuf:"bytes,1,opt,name=BcTxIdentifier,proto3" json:"BcTxIdentifier,omitempty"`
-	Confirmations  uint64        `protobuf:"varint,3,opt,name=Confirmations,proto3" json:"Confirmations,omitempty"`
-	BlockNumber    uint64        `protobuf:"varint,4,opt,name=BlockNumber,proto3" json:"BlockNumber,omitempty"`
-	Status         BcTxStatus    `protobuf:"varint,5,opt,name=Status,proto3,enum=order_events.BcTxStatus" json:"Status,omitempty"`
-	ExplorerURL    string        `protobuf:"bytes,6,opt,name=ExplorerURL,proto3" json:"ExplorerURL,omitempty"`
+	BcTxIdentifier *BcTxIdentity    `protobuf:"bytes,1,opt,name=BcTxIdentifier,proto3" json:"BcTxIdentifier,omitempty"`
+	Confirmations  uint64           `protobuf:"varint,2,opt,name=Confirmations,proto3" json:"Confirmations,omitempty"`
+	BlockNumber    uint64           `protobuf:"varint,3,opt,name=BlockNumber,proto3" json:"BlockNumber,omitempty"`
+	Operations     []*BcTxOperation `protobuf:"bytes,4,rep,name=Operations,proto3" json:"Operations,omitempty"`
+	Status         BcTxStatus       `protobuf:"varint,5,opt,name=Status,proto3,enum=order_events.BcTxStatus" json:"Status,omitempty"`
+	RealFee        uint64           `protobuf:"varint,6,opt,name=RealFee,proto3" json:"RealFee,omitempty"`
+	ExplorerURL    string           `protobuf:"bytes,7,opt,name=ExplorerURL,proto3" json:"ExplorerURL,omitempty"`
 }
 
 func (x *BcTxInfo) Reset() {
 	*x = BcTxInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_order_events_proto_msgTypes[2]
+		mi := &file_order_events_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -331,7 +396,7 @@ func (x *BcTxInfo) String() string {
 func (*BcTxInfo) ProtoMessage() {}
 
 func (x *BcTxInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_order_events_proto_msgTypes[2]
+	mi := &file_order_events_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -344,7 +409,7 @@ func (x *BcTxInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BcTxInfo.ProtoReflect.Descriptor instead.
 func (*BcTxInfo) Descriptor() ([]byte, []int) {
-	return file_order_events_proto_rawDescGZIP(), []int{2}
+	return file_order_events_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *BcTxInfo) GetBcTxIdentifier() *BcTxIdentity {
@@ -368,11 +433,25 @@ func (x *BcTxInfo) GetBlockNumber() uint64 {
 	return 0
 }
 
+func (x *BcTxInfo) GetOperations() []*BcTxOperation {
+	if x != nil {
+		return x.Operations
+	}
+	return nil
+}
+
 func (x *BcTxInfo) GetStatus() BcTxStatus {
 	if x != nil {
 		return x.Status
 	}
 	return BcTxStatus_PLACEHOLDER_BC_TX_STATUS
+}
+
+func (x *BcTxInfo) GetRealFee() uint64 {
+	if x != nil {
+		return x.RealFee
+	}
+	return 0
 }
 
 func (x *BcTxInfo) GetExplorerURL() string {
@@ -406,7 +485,7 @@ type Order struct {
 func (x *Order) Reset() {
 	*x = Order{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_order_events_proto_msgTypes[3]
+		mi := &file_order_events_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -419,7 +498,7 @@ func (x *Order) String() string {
 func (*Order) ProtoMessage() {}
 
 func (x *Order) ProtoReflect() protoreflect.Message {
-	mi := &file_order_events_proto_msgTypes[3]
+	mi := &file_order_events_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -432,7 +511,7 @@ func (x *Order) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Order.ProtoReflect.Descriptor instead.
 func (*Order) Descriptor() ([]byte, []int) {
-	return file_order_events_proto_rawDescGZIP(), []int{3}
+	return file_order_events_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Order) GetOrderIdentifier() *OrderIdentity {
@@ -552,7 +631,7 @@ type OrderEvent struct {
 func (x *OrderEvent) Reset() {
 	*x = OrderEvent{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_order_events_proto_msgTypes[4]
+		mi := &file_order_events_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -565,7 +644,7 @@ func (x *OrderEvent) String() string {
 func (*OrderEvent) ProtoMessage() {}
 
 func (x *OrderEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_order_events_proto_msgTypes[4]
+	mi := &file_order_events_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -578,7 +657,7 @@ func (x *OrderEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrderEvent.ProtoReflect.Descriptor instead.
 func (*OrderEvent) Descriptor() ([]byte, []int) {
-	return file_order_events_proto_rawDescGZIP(), []int{4}
+	return file_order_events_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *OrderEvent) GetEventIdentity() string {
@@ -659,22 +738,33 @@ var file_order_events_proto_rawDesc = []byte{
 	0x52, 0x11, 0x50, 0x72, 0x6f, 0x76, 0x69, 0x64, 0x65, 0x72, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x55,
 	0x55, 0x49, 0x44, 0x22, 0x36, 0x0a, 0x0c, 0x42, 0x63, 0x54, 0x78, 0x49, 0x64, 0x65, 0x6e, 0x74,
 	0x69, 0x74, 0x79, 0x12, 0x12, 0x0a, 0x04, 0x54, 0x78, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x04, 0x54, 0x78, 0x49, 0x44, 0x12, 0x12, 0x0a, 0x04, 0x56, 0x6f, 0x75, 0x74, 0x18,
-	0x02, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x04, 0x56, 0x6f, 0x75, 0x74, 0x22, 0xea, 0x01, 0x0a, 0x08,
-	0x42, 0x63, 0x54, 0x78, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x42, 0x0a, 0x0e, 0x42, 0x63, 0x54, 0x78,
-	0x49, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x66, 0x69, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
-	0x32, 0x1a, 0x2e, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x5f, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x2e,
-	0x42, 0x63, 0x54, 0x78, 0x49, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x74, 0x79, 0x52, 0x0e, 0x42, 0x63,
-	0x54, 0x78, 0x49, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x66, 0x69, 0x65, 0x72, 0x12, 0x24, 0x0a, 0x0d,
-	0x43, 0x6f, 0x6e, 0x66, 0x69, 0x72, 0x6d, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x03, 0x20,
-	0x01, 0x28, 0x04, 0x52, 0x0d, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x72, 0x6d, 0x61, 0x74, 0x69, 0x6f,
-	0x6e, 0x73, 0x12, 0x20, 0x0a, 0x0b, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x4e, 0x75, 0x6d, 0x62, 0x65,
-	0x72, 0x18, 0x04, 0x20, 0x01, 0x28, 0x04, 0x52, 0x0b, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x4e, 0x75,
-	0x6d, 0x62, 0x65, 0x72, 0x12, 0x30, 0x0a, 0x06, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x05,
-	0x20, 0x01, 0x28, 0x0e, 0x32, 0x18, 0x2e, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x5f, 0x65, 0x76, 0x65,
-	0x6e, 0x74, 0x73, 0x2e, 0x42, 0x63, 0x54, 0x78, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x06,
-	0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x20, 0x0a, 0x0b, 0x45, 0x78, 0x70, 0x6c, 0x6f, 0x72,
-	0x65, 0x72, 0x55, 0x52, 0x4c, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x45, 0x78, 0x70,
+	0x09, 0x52, 0x04, 0x54, 0x78, 0x49, 0x44, 0x12, 0x12, 0x0a, 0x04, 0x4d, 0x65, 0x74, 0x61, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x04, 0x4d, 0x65, 0x74, 0x61, 0x22, 0x57, 0x0a, 0x0d, 0x42,
+	0x63, 0x54, 0x78, 0x4f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x14, 0x0a, 0x05,
+	0x49, 0x6e, 0x64, 0x65, 0x78, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x05, 0x49, 0x6e, 0x64,
+	0x65, 0x78, 0x12, 0x18, 0x0a, 0x07, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x07, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x12, 0x16, 0x0a, 0x06,
+	0x41, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x04, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x41, 0x6d,
+	0x6f, 0x75, 0x6e, 0x74, 0x22, 0xc1, 0x02, 0x0a, 0x08, 0x42, 0x63, 0x54, 0x78, 0x49, 0x6e, 0x66,
+	0x6f, 0x12, 0x42, 0x0a, 0x0e, 0x42, 0x63, 0x54, 0x78, 0x49, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x66,
+	0x69, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x6f, 0x72, 0x64, 0x65,
+	0x72, 0x5f, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x2e, 0x42, 0x63, 0x54, 0x78, 0x49, 0x64, 0x65,
+	0x6e, 0x74, 0x69, 0x74, 0x79, 0x52, 0x0e, 0x42, 0x63, 0x54, 0x78, 0x49, 0x64, 0x65, 0x6e, 0x74,
+	0x69, 0x66, 0x69, 0x65, 0x72, 0x12, 0x24, 0x0a, 0x0d, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x72, 0x6d,
+	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x04, 0x52, 0x0d, 0x43, 0x6f,
+	0x6e, 0x66, 0x69, 0x72, 0x6d, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x12, 0x20, 0x0a, 0x0b, 0x42,
+	0x6c, 0x6f, 0x63, 0x6b, 0x4e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x04,
+	0x52, 0x0b, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x4e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x12, 0x3b, 0x0a,
+	0x0a, 0x4f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x04, 0x20, 0x03, 0x28,
+	0x0b, 0x32, 0x1b, 0x2e, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x5f, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x73,
+	0x2e, 0x42, 0x63, 0x54, 0x78, 0x4f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x0a,
+	0x4f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x12, 0x30, 0x0a, 0x06, 0x53, 0x74,
+	0x61, 0x74, 0x75, 0x73, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x18, 0x2e, 0x6f, 0x72, 0x64,
+	0x65, 0x72, 0x5f, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x2e, 0x42, 0x63, 0x54, 0x78, 0x53, 0x74,
+	0x61, 0x74, 0x75, 0x73, 0x52, 0x06, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x18, 0x0a, 0x07,
+	0x52, 0x65, 0x61, 0x6c, 0x46, 0x65, 0x65, 0x18, 0x06, 0x20, 0x01, 0x28, 0x04, 0x52, 0x07, 0x52,
+	0x65, 0x61, 0x6c, 0x46, 0x65, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x45, 0x78, 0x70, 0x6c, 0x6f, 0x72,
+	0x65, 0x72, 0x55, 0x52, 0x4c, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x45, 0x78, 0x70,
 	0x6c, 0x6f, 0x72, 0x65, 0x72, 0x55, 0x52, 0x4c, 0x22, 0xf0, 0x04, 0x0a, 0x05, 0x4f, 0x72, 0x64,
 	0x65, 0x72, 0x12, 0x45, 0x0a, 0x0f, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x49, 0x64, 0x65, 0x6e, 0x74,
 	0x69, 0x66, 0x69, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1b, 0x2e, 0x6f, 0x72,
@@ -777,30 +867,32 @@ func file_order_events_proto_rawDescGZIP() []byte {
 }
 
 var file_order_events_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_order_events_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_order_events_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_order_events_proto_goTypes = []interface{}{
 	(OrderType)(0),        // 0: order_events.OrderType
 	(OrderStatus)(0),      // 1: order_events.OrderStatus
 	(BcTxStatus)(0),       // 2: order_events.BcTxStatus
 	(*OrderIdentity)(nil), // 3: order_events.OrderIdentity
 	(*BcTxIdentity)(nil),  // 4: order_events.BcTxIdentity
-	(*BcTxInfo)(nil),      // 5: order_events.BcTxInfo
-	(*Order)(nil),         // 6: order_events.Order
-	(*OrderEvent)(nil),    // 7: order_events.OrderEvent
+	(*BcTxOperation)(nil), // 5: order_events.BcTxOperation
+	(*BcTxInfo)(nil),      // 6: order_events.BcTxInfo
+	(*Order)(nil),         // 7: order_events.Order
+	(*OrderEvent)(nil),    // 8: order_events.OrderEvent
 }
 var file_order_events_proto_depIdxs = []int32{
 	4, // 0: order_events.BcTxInfo.BcTxIdentifier:type_name -> order_events.BcTxIdentity
-	2, // 1: order_events.BcTxInfo.Status:type_name -> order_events.BcTxStatus
-	3, // 2: order_events.Order.OrderIdentifier:type_name -> order_events.OrderIdentity
-	0, // 3: order_events.Order.Type:type_name -> order_events.OrderType
-	1, // 4: order_events.Order.Status:type_name -> order_events.OrderStatus
-	5, // 5: order_events.Order.BcTx:type_name -> order_events.BcTxInfo
-	6, // 6: order_events.OrderEvent.OrderInfo:type_name -> order_events.Order
-	7, // [7:7] is the sub-list for method output_type
-	7, // [7:7] is the sub-list for method input_type
-	7, // [7:7] is the sub-list for extension type_name
-	7, // [7:7] is the sub-list for extension extendee
-	0, // [0:7] is the sub-list for field type_name
+	5, // 1: order_events.BcTxInfo.Operations:type_name -> order_events.BcTxOperation
+	2, // 2: order_events.BcTxInfo.Status:type_name -> order_events.BcTxStatus
+	3, // 3: order_events.Order.OrderIdentifier:type_name -> order_events.OrderIdentity
+	0, // 4: order_events.Order.Type:type_name -> order_events.OrderType
+	1, // 5: order_events.Order.Status:type_name -> order_events.OrderStatus
+	6, // 6: order_events.Order.BcTx:type_name -> order_events.BcTxInfo
+	7, // 7: order_events.OrderEvent.OrderInfo:type_name -> order_events.Order
+	8, // [8:8] is the sub-list for method output_type
+	8, // [8:8] is the sub-list for method input_type
+	8, // [8:8] is the sub-list for extension type_name
+	8, // [8:8] is the sub-list for extension extendee
+	0, // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_order_events_proto_init() }
@@ -834,7 +926,7 @@ func file_order_events_proto_init() {
 			}
 		}
 		file_order_events_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*BcTxInfo); i {
+			switch v := v.(*BcTxOperation); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -846,7 +938,7 @@ func file_order_events_proto_init() {
 			}
 		}
 		file_order_events_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Order); i {
+			switch v := v.(*BcTxInfo); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -858,6 +950,18 @@ func file_order_events_proto_init() {
 			}
 		}
 		file_order_events_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Order); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_order_events_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*OrderEvent); i {
 			case 0:
 				return &v.state
@@ -876,7 +980,7 @@ func file_order_events_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_order_events_proto_rawDesc,
 			NumEnums:      3,
-			NumMessages:   5,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
