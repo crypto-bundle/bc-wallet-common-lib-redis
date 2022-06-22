@@ -50,6 +50,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| NetworkIdentifier | [uint32](#uint32) |  |  |
 | BcTxIdentifier | [BcTxIdentity](#order_events.BcTxIdentity) |  |  |
 | Confirmations | [uint64](#uint64) |  |  |
 | BlockNumber | [uint64](#uint64) |  |  |
