@@ -11,6 +11,7 @@ require (
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lib/pq v1.10.4
+	github.com/pebbe/zmq4 v1.2.8
 	github.com/mailru/easyjson v0.7.7
 	github.com/nats-io/nats.go v1.15.0
 	go.uber.org/zap v1.21.0
@@ -58,6 +59,7 @@ require (
 	github.com/mitchellh/go-testing-interface v1.0.0 // indirect
 	github.com/mitchellh/mapstructure v1.4.2 // indirect
 	github.com/mitchellh/reflectwalk v1.0.0 // indirect
+	github.com/nats-io/nats-server/v2 v2.8.2 // indirect
 	github.com/nats-io/nkeys v0.3.0 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/oklog/run v1.0.0 // indirect
