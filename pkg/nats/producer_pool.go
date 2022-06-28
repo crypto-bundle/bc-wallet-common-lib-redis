@@ -23,30 +23,13 @@ type ProducerWorkerPool struct {
 }
 
 func (wp *ProducerWorkerPool) Init(ctx context.Context) error {
-	streamInfo, err := wp.getOrCreateStream(ctx)
+	streamInfo, err := wp.getStreamInfo(ctx)
 	if err != nil {
 		return err
 	}
 
 	if streamInfo == nil {
 		return ErrReturnedNilStreamInfo
-	}
-
-	//addStreamErr := wp.natsProducerConn.DeleteStream(wp.streamName)
-	//if addStreamErr != nil {
-	//	return addStreamErr
-	//}
-
-	if len(streamInfo.Config.Subjects) != len(wp.subject) {
-		oldConf := streamInfo.Config
-		oldConf.Subjects = append(wp.subject, oldConf.Subjects...)
-
-		stream, addStreamErr := wp.natsProducerConn.UpdateStream(&oldConf)
-		if addStreamErr != nil {
-			return addStreamErr
-		}
-
-		streamInfo = stream
 	}
 
 	for i, _ := range wp.workers {
@@ -56,16 +39,11 @@ func (wp *ProducerWorkerPool) Init(ctx context.Context) error {
 	return nil
 }
 
-func (wp *ProducerWorkerPool) getOrCreateStream(ctx context.Context) (*nats.StreamInfo, error) {
+func (wp *ProducerWorkerPool) getStreamInfo(ctx context.Context) (*nats.StreamInfo, error) {
 	streamInfo, err := wp.natsProducerConn.StreamInfo(wp.jsConfig.Name)
 	if err != nil {
 		if errors.Is(err, nats.ErrStreamNotFound) {
-			stream, addStreamErr := wp.natsProducerConn.AddStream(wp.jsConfig)
-			if addStreamErr != nil {
-				return nil, addStreamErr
-			}
-
-			streamInfo = stream
+			wp.logger.Error("stream not found", zap.Error(err))
 		}
 
 		return nil, err
@@ -96,6 +74,10 @@ func (wp *ProducerWorkerPool) Shutdown(ctx context.Context) error {
 
 func (wp *ProducerWorkerPool) Produce(ctx context.Context, msg *nats.Msg) {
 	wp.msgChannel <- msg
+}
+
+func (wp *ProducerWorkerPool) ProduceSync(ctx context.Context, msg *nats.Msg) error {
+	return wp.workers[0].PublishMsg(msg)
 }
 
 func NewProducerWorkersPool(

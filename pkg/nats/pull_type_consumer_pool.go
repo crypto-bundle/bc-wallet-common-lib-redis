@@ -36,7 +36,7 @@ type PullTypeConsumerWorkerPool struct {
 }
 
 func (wp *PullTypeConsumerWorkerPool) Init(ctx context.Context) error {
-	//streamInfo, err := wp.getOrCreateStream(ctx)
+	//streamInfo, err := wp.getStreamInfo(ctx)
 	//if err != nil {
 	//	return err
 	//}

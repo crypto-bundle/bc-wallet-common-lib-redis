@@ -9,16 +9,47 @@ import (
 
 var (
 	ErrUnableGetTransactionFromContext = errors.New("unable get transaction from context")
-	ErrNotInContextualTxStatement = errors.New("unable to commit transaction statement - not in tx statement")
+	ErrNotInContextualTxStatement      = errors.New("unable to commit transaction statement - not in tx statement")
 )
 
 type transactionCtxKey string
 
 var transactionKey = transactionCtxKey("transaction")
+var transactionCommittedKey = transactionCtxKey("is_committed")
+
+type txStmtCallback func(txStmtCtx context.Context) error
 
 // BeginTx ....
 func (c *Connection) BeginTx() (*sqlx.Tx, error) {
 	return c.Dbx.Beginx()
+}
+
+// BeginTxWithUnlessCommittedRollback ....
+func (c *Connection) BeginTxWithUnlessCommittedRollback(ctx context.Context,
+	callback func(txStmtCtx context.Context) error,
+) error {
+	txStmt, err := c.Dbx.Beginx()
+	if err != nil {
+		return err
+	}
+
+	newCtx := context.WithValue(ctx, transactionKey, txStmt)
+	err = callback(newCtx)
+	if err != nil {
+		rollbackErr := txStmt.Rollback()
+		if rollbackErr != nil {
+			return rollbackErr
+		}
+
+		return err
+	}
+
+	err = txStmt.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // BeginContextualTxStatement ....

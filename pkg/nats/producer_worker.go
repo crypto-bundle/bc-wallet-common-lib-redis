@@ -29,26 +29,39 @@ func (ww *producerWorkerWrapper) Run() {
 	for {
 		select {
 		case v := <-ww.msgChannel:
-			pubAck, err := ww.natsProducerConn.PublishMsg(v)
+			err := ww.publishMsg(v)
 			if err != nil {
 				ww.logger.Error("send message to broker service failed", zap.Error(err),
 					zap.String(QueueSubjectNameTag, v.Subject),
 					zap.String(QueueStreamNameTag, ww.jsInfo.Config.Name))
 			}
 
-			if pubAck == nil {
-				ww.logger.Error("received nil pubAck", zap.Error(ErrNilPubAck))
-				continue
-			}
-
-			ww.logger.Info("received pubAck", zap.String(QueuePubAckStreamNameTag, pubAck.Stream),
-				zap.Uint64(QueuePubAckSequenceTag, pubAck.Sequence))
-
 		case <-ww.closeChanel:
 			ww.logger.Info("producer worker. received close worker message")
 			return
 		}
 	}
+}
+
+func (ww *producerWorkerWrapper) PublishMsg(v *nats.Msg) error {
+	return ww.publishMsg(v)
+}
+
+func (ww *producerWorkerWrapper) publishMsg(v *nats.Msg) error {
+	pubAck, err := ww.natsProducerConn.PublishMsg(v)
+	if err != nil {
+		return err
+	}
+
+	if pubAck == nil {
+		ww.logger.Error("received nil pubAck", zap.Error(ErrNilPubAck))
+		return ErrNilPubAck
+	}
+
+	ww.logger.Info("received pubAck", zap.String(QueuePubAckStreamNameTag, pubAck.Stream),
+		zap.Uint64(QueuePubAckSequenceTag, pubAck.Sequence))
+
+	return nil
 }
 
 func (ww *producerWorkerWrapper) SetStreamInfo(streamInfo *nats.StreamInfo) {
