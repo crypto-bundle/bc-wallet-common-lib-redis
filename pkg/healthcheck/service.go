@@ -1,7 +1,6 @@
 package healthcheck
 
 import (
-	"context"
 	"net/http"
 	"time"
 
@@ -9,7 +8,24 @@ import (
 	"go.uber.org/zap"
 )
 
-type Probe func(ctx context.Context) error
+type ServiceCreator struct {
+	cfg    config
+	logger *zap.Logger
+}
+
+func NewServiceCreator(cfg config, logger *zap.Logger) *ServiceCreator {
+	return &ServiceCreator{cfg: cfg, logger: logger}
+}
+
+func (c *ServiceCreator) Create(livenessProbe, readinessProbe, startupProbe Probe) (HealthcheckService, error) {
+	healthcheckSrv := New(c.cfg, livenessProbe, readinessProbe, startupProbe, c.logger)
+	err := healthcheckSrv.Init()
+	if err != nil {
+		return nil, err
+	}
+
+	return healthcheckSrv, nil
+}
 
 type Service struct {
 	cfg    config
@@ -18,8 +34,8 @@ type Service struct {
 	handler *httpHandler
 }
 
-func New(cfg config, livenessProbe, readinessProbe, startupProbe Probe, loggerSrv *zap.Logger) *Service {
-	l := loggerSrv.Named("healthcheck")
+func New(cfg config, livenessProbe, readinessProbe, startupProbe Probe, logger *zap.Logger) *Service {
+	l := logger.Named("healthcheck")
 
 	h := NewHttpHandler(livenessProbe, readinessProbe, startupProbe)
 
@@ -50,9 +66,11 @@ func (s *Service) Init() error {
 	go func() {
 		err := server.ListenAndServe()
 		if err != nil {
-			s.logger.Error("unable to listen and serve healthcheck http server", zap.Error(err))
+			s.logger.Error("unable to listen and serve http server", zap.Error(err))
 		}
 	}()
+
+	s.logger.Info("initiated successfully", zap.String("address", s.cfg.GetAddress()))
 
 	return nil
 }

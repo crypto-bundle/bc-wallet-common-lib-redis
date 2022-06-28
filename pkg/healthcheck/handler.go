@@ -21,7 +21,7 @@ func NewHttpHandler(livenessProbe, readinessProbe, startupProbe Probe) *httpHand
 }
 
 func (h *httpHandler) Liveness(ctx *gin.Context) {
-	err := h.livenessProbe(ctx)
+	err := h.livenessProbe.Do(ctx)
 	if err != nil {
 		ctx.AbortWithStatus(http.StatusInternalServerError)
 	}
@@ -30,7 +30,7 @@ func (h *httpHandler) Liveness(ctx *gin.Context) {
 }
 
 func (h *httpHandler) Readiness(ctx *gin.Context) {
-	err := h.readinessProbe(ctx)
+	err := h.readinessProbe.Do(ctx)
 	if err != nil {
 		ctx.AbortWithStatus(http.StatusInternalServerError)
 	}
@@ -39,7 +39,7 @@ func (h *httpHandler) Readiness(ctx *gin.Context) {
 }
 
 func (h *httpHandler) Startup(ctx *gin.Context) {
-	err := h.startupProbe(ctx)
+	err := h.startupProbe.Do(ctx)
 	if err != nil {
 		ctx.AbortWithStatus(http.StatusInternalServerError)
 	}
