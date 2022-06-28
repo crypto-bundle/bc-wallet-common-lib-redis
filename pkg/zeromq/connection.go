@@ -38,9 +38,11 @@ func (c *Connection) Connect() error {
 			return nil
 		}
 
-		reconnectCnt++
-		if reconnectCnt > c.reconnectMaxCount {
-			return ErrReachedMaxReconnectionCount
+		if c.reconnectMaxCount != 0 {
+			reconnectCnt++
+			if reconnectCnt > c.reconnectMaxCount {
+				return ErrReachedMaxReconnectionCount
+			}
 		}
 
 		time.Sleep(c.reconnectWaitTimeOut)

@@ -7,12 +7,12 @@ import (
 )
 
 type Config struct {
-	Endpoint string `env:"ENDPOINT" required:"true"`
-	Username string `env:"USERNAME"`
-	Password string `env:"PASSWORD"`
+	Endpoint string `env:"ENDPOINT" required:"true" default:"tcp://127.0.0.1:9000"`
+	Username string `env:"USERNAME" default:"username"`
+	Password string `env:"PASSWORD" default:"password"`
 
-	ReconnectMaxCount    uint16        `env:"RECONNECT_MAX_COUNT" envDefault:"30"`
-	ReconnectWaitTimeOut time.Duration `env:"RECONNECT_WAIT_TIMEOUT" envDefault:"15s"`
+	ReconnectMaxCount    uint16        `env:"RECONNECT_MAX_COUNT" default:"30"`
+	ReconnectWaitTimeOut time.Duration `env:"RECONNECT_WAIT_TIMEOUT" default:"15s"`
 }
 
 func (c *Config) GetEndpoint() string {
