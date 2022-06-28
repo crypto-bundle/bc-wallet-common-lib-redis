@@ -3,6 +3,8 @@ package nats
 import (
 	"context"
 
+	"github.com/cryptowize-tech/bc-wallet-common/pkg/queue"
+
 	"github.com/nats-io/nats.go"
 	"go.uber.org/zap"
 )
@@ -54,19 +56,19 @@ func (ww *consumerWorkerWrapper) processMsg(msg *nats.Msg) {
 				zap.Uint64(DeliveredCount, msgMetaData.NumDelivered))
 		}
 
-	case decisionDirective == DirectiveForPass:
+	case decisionDirective == queue.DirectiveForPass:
 		arrErr := msg.Ack()
 		if arrErr != nil {
 			ww.logger.Error("unable to ACK message", zap.Error(arrErr), zap.Any("message", msg))
 		}
 
-	case decisionDirective == DirectiveForReQueue:
+	case decisionDirective == queue.DirectiveForReQueue:
 		nakErr := msg.Nak()
 		if nakErr != nil {
 			ww.logger.Error("unable to RE-QUEUE message", zap.Error(nakErr), zap.Any("message", msg))
 		}
 
-	case decisionDirective == DirectiveForReject:
+	case decisionDirective == queue.DirectiveForReject:
 		termErr := msg.Term()
 		if termErr != nil {
 			ww.logger.Error("unable to REJECTION-ACK message", zap.Error(err), zap.Any("message", msg))
