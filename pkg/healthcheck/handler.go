@@ -24,25 +24,25 @@ func (h *httpHandler) Liveness(ctx *gin.Context) {
 	err := h.livenessProbe.Do(ctx)
 	if err != nil {
 		ctx.AbortWithStatus(http.StatusInternalServerError)
+	} else {
+		ctx.String(http.StatusOK, "ok")
 	}
-
-	ctx.String(http.StatusOK, "ok")
 }
 
 func (h *httpHandler) Readiness(ctx *gin.Context) {
 	err := h.readinessProbe.Do(ctx)
 	if err != nil {
 		ctx.AbortWithStatus(http.StatusInternalServerError)
+	} else {
+		ctx.String(http.StatusOK, "ok")
 	}
-
-	ctx.String(http.StatusOK, "ok")
 }
 
 func (h *httpHandler) Startup(ctx *gin.Context) {
 	err := h.startupProbe.Do(ctx)
 	if err != nil {
 		ctx.AbortWithStatus(http.StatusInternalServerError)
+	} else {
+		ctx.String(http.StatusOK, "ok")
 	}
-
-	ctx.String(http.StatusOK, "ok")
 }
