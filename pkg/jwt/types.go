@@ -1,4 +1,4 @@
-package jwtvalitator
+package jwt
 
 import (
 	"github.com/golang-jwt/jwt/v4"
@@ -6,10 +6,10 @@ import (
 )
 
 //go:generate easyjson types.go
-// easyjson:json
 
+// CustomClaims for store merchant_id
+// easyjson:json
 type CustomClaims struct {
 	jwt.RegisteredClaims
 	MerchantUUID uuid.UUID `json:"merchant_id"`
-	WalletUUID uuid.UUID `json:"wallet_id"`
 }

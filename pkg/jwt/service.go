@@ -1,4 +1,4 @@
-package jwtvalitator
+package jwt
 
 import (
 	"errors"
@@ -51,32 +51,6 @@ func (manager *service) GetMerchantUUID(accessToken string) (mID uuid.UUID, err 
 	}
 
 	return claim.MerchantUUID, nil
-}
-
-func (manager *service) GetWalletUUID(accessToken string) (wID uuid.UUID, err error) {
-	token, err := jwt.ParseWithClaims(
-		accessToken,
-		&CustomClaims{},
-		func(token *jwt.Token) (interface{}, error) {
-			_, ok := token.Method.(*jwt.SigningMethodHMAC)
-			if !ok {
-				return nil, ErrWrongTokenSigningMethod
-			}
-
-			return []byte(manager.secret), nil
-		},
-	)
-
-	if err != nil {
-		return wID, ErrInvalidToken
-	}
-
-	claim, ok := token.Claims.(*CustomClaims)
-	if !ok {
-		return wID, ErrInvalidTokenClaims
-	}
-
-	return claim.WalletUUID, nil
 }
 
 func (manager *service) GenerateJWT(merchantUUID, expTime string) (string, error) {
