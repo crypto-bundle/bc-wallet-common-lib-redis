@@ -15,13 +15,19 @@ require (
 	github.com/mailru/easyjson v0.7.7
 	github.com/nats-io/nats.go v1.15.0
 	github.com/pebbe/zmq4 v1.2.8
+	github.com/prometheus/client_golang v1.4.0
 	go.uber.org/zap v1.21.0
 	google.golang.org/protobuf v1.28.0
 )
 
 require (
+	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
+	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/nats-io/nats-server/v2 v2.8.4 // indirect
+	github.com/prometheus/client_model v0.2.0 // indirect
+	github.com/prometheus/common v0.9.1 // indirect
+	github.com/prometheus/procfs v0.0.8 // indirect
 )
 
 require (
