@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	ginzap "github.com/gin-contrib/zap"
 	"go.uber.org/zap"
 )
 
@@ -51,7 +52,11 @@ func (s *Service) Init() error {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	router := gin.Default()
+	router := gin.New()
+	router.Use(
+		ginzap.Ginzap(s.logger, time.RFC3339, false),
+		ginzap.RecoveryWithZap(s.logger, true),
+	)
 	router.GET(s.cfg.GetLivenessPath(), s.handler.Liveness)
 	router.GET(s.cfg.GetReadinessPath(), s.handler.Readiness)
 	router.GET(s.cfg.GetStartupPath(), s.handler.Startup)
