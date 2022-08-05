@@ -4,20 +4,20 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
-type Config struct {
+type MetricConfig struct {
 	HttpPort string `envconfig:"METRIC_HTTP_PORT" default:"8000"`
 	Path     string `envconfig:"METRIC_PATH" default:"/metrics"`
 }
 
-func (c *Config) GetAddress() string {
+func (c *MetricConfig) GetAddress() string {
 	return ":" + c.HttpPort
 }
 
-func (c *Config) GetPath() string {
+func (c *MetricConfig) GetPath() string {
 	return c.Path
 }
 
 // Prepare variables to static configuration
-func (c *Config) Prepare() error {
+func (c *MetricConfig) Prepare() error {
 	return envconfig.Process("", c)
 }

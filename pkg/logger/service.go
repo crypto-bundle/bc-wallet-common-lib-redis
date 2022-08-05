@@ -24,7 +24,7 @@ func (s *Service) NewLoggerEntry(named string) (*zap.Logger, error) {
 	l := zap.New(zapcore.NewTee(cores...))
 	zap.ReplaceGlobals(l)
 
-	l.Named(named)
+	l = l.Named(named)
 
 	_, ok := s.entries[named]
 	if ok {

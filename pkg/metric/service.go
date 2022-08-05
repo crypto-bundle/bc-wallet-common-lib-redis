@@ -6,10 +6,12 @@ import (
 	"sync"
 
 	"github.com/gin-gonic/gin"
+	ginzap "github.com/gin-contrib/zap"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
+	"time"
 )
 
 type Service struct {
@@ -30,12 +32,10 @@ type Service struct {
 }
 
 func New(name string, cfg config, logger *zap.Logger) *Service {
-	l := logger.Named("metric")
-
 	return &Service{
 		name:                name,
 		cfg:                 cfg,
-		logger:              l,
+		logger:              logger.Named("metric"),
 		cmdToCountersCh:     make(chan cmdForCounter, 1),
 		cmdToCounterVecsCh:  make(chan cmdForCounterVec, 1),
 		cmdToGaugesCh:       make(chan cmdForGauge, 1),
@@ -48,7 +48,11 @@ func New(name string, cfg config, logger *zap.Logger) *Service {
 func (s *Service) Init() error {
 	gin.SetMode(gin.ReleaseMode)
 
-	router := gin.Default()
+	router := gin.New()
+	router.Use(
+		ginzap.Ginzap(s.logger, time.RFC3339, false),
+		ginzap.RecoveryWithZap(s.logger, true),
+	)
 	router.GET(s.cfg.GetPath(), gin.WrapH(promhttp.Handler()))
 
 	server := &http.Server{
