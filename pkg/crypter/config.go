@@ -1,20 +1,30 @@
 package crypter
 
 import (
+	"fmt"
+	"os"
+
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	"fmt"
-	"os"
+
+	"github.com/kelseyhightower/envconfig"
 )
 
+const ConfigPrefix = "RSA"
+
 type Config struct {
-	KeyPath string `envconfig:"key_path"  default:"./id_rsa"`
+	KeyPath string `envconfig:"RSA_ENCRYPTION_KEY_PATH"  default:"./id_rsa"`
 }
 
 //nolint:funlen // its ok
 func (c *Config) Prepare() error {
-	_, err := os.Stat(c.KeyPath)
+	err := envconfig.Process(ConfigPrefix, c)
+	if err != nil {
+		return err
+	}
+
+	_, err = os.Stat(c.KeyPath)
 	if err != nil {
 		return err
 	}

@@ -1,10 +1,10 @@
 package crypter
 
 import (
-	"fmt"
+	"errors"
 )
 
 var (
-	ErrInvalidKey = fmt.Errorf("fail to get idrsa, invalid key")
-	ErrParsePK    = fmt.Errorf("fail to parse private key")
+	ErrInvalidKey = errors.New("fail to get idrsa, invalid key")
+	ErrParsePK    = errors.New("fail to parse private key")
 )
