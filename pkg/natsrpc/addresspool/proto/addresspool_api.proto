@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package addressPool;
+
+option go_package = "github.com/cryptowize-tech/bc-wallet-btc-addresspool/pkg/grpc";
+
+message AddressIdentity {
+  string UUID = 1;
+
+  string Address = 5;
+  string WalletUUID = 6;
+  bool   IsReserved = 7;
+  uint64 ReservedAt = 8;
+}
+
+message ReserveAddressRequest {
+  string WalletUUID = 1;
+}
+
+message ReserveAddressResponse {
+  AddressIdentity Address = 1;
+}
