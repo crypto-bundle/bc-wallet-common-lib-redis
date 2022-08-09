@@ -26,7 +26,7 @@ type jsConsumerWorkerPool struct {
 	durable     bool
 
 	handler consumerHandler
-	workers []*consumerWorkerWrapper
+	workers []*jsConsumerWorkerWrapper
 
 	logger *zap.Logger
 }
@@ -128,9 +128,11 @@ func NewJsConsumerWorkersPool(logger *zap.Logger,
 	handler consumerHandler,
 	jsNatsConn nats.JetStreamContext,
 ) *jsConsumerWorkerPool {
+	l := logger.Named("consumer_pool.service")
+
 	workersPool := &jsConsumerWorkerPool{
 		handler:        handler,
-		logger:         logger,
+		logger:         l,
 		msgChannel:     msgChannel,
 		subjectName:    subjectName,
 		streamName:     streamName,
@@ -138,11 +140,11 @@ func NewJsConsumerWorkersPool(logger *zap.Logger,
 	}
 
 	for i := uint16(0); i < workersCount; i++ {
-		ww := &consumerWorkerWrapper{
+		ww := &jsConsumerWorkerWrapper{
 			msgChannel:       workersPool.msgChannel,
 			stopWorkerChanel: make(chan bool),
 			handler:          workersPool.handler,
-			logger:           logger,
+			logger:           l.With(zap.Uint16(WorkerUnitNumberTag, i)),
 		}
 
 		workersPool.workers = append(workersPool.workers, ww)

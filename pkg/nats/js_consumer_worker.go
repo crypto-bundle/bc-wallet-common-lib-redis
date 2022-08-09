@@ -9,8 +9,8 @@ import (
 	"go.uber.org/zap"
 )
 
-// consumerWorkerWrapper ...
-type consumerWorkerWrapper struct {
+// jsConsumerWorkerWrapper ...
+type jsConsumerWorkerWrapper struct {
 	msgChannel       <-chan *nats.Msg
 	stopWorkerChanel chan bool
 
@@ -21,7 +21,7 @@ type consumerWorkerWrapper struct {
 	maxRedeliveryCount uint64
 }
 
-func (ww *consumerWorkerWrapper) Start() {
+func (ww *jsConsumerWorkerWrapper) Start() {
 	for {
 		select {
 		case <-ww.stopWorkerChanel:
@@ -39,9 +39,23 @@ func (ww *consumerWorkerWrapper) Start() {
 	}
 }
 
-func (ww *consumerWorkerWrapper) processMsg(msg *nats.Msg) {
+func (ww *jsConsumerWorkerWrapper) processMsg(msg *nats.Msg) {
+	msgMetaData, err := msg.Metadata()
+	if err != nil {
+		ww.logger.Error("unable to get message metadata", zap.Error(err),
+			zap.String(SubjectTag, msg.Subject))
+	}
+
 	decisionDirective, err := ww.handler.Process(context.Background(), msg)
 	switch {
+	case err != nil && msgMetaData.NumDelivered <= ww.maxRedeliveryCount:
+		nakErr := msg.Nak()
+		if nakErr != nil {
+			ww.logger.Error("unable to NACK message", zap.Error(nakErr),
+				zap.String(SubjectTag, msg.Subject),
+				zap.Uint64(DeliveredCount, msgMetaData.NumDelivered))
+		}
+
 	case decisionDirective == queue.DirectiveForPass:
 		arrErr := msg.Ack()
 		if arrErr != nil {
@@ -62,6 +76,6 @@ func (ww *consumerWorkerWrapper) processMsg(msg *nats.Msg) {
 	}
 }
 
-func (ww *consumerWorkerWrapper) Stop() {
+func (ww *jsConsumerWorkerWrapper) Stop() {
 	ww.stopWorkerChanel <- true
 }

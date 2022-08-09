@@ -30,7 +30,7 @@ type PullTypeConsumerWorkerPool struct {
 	pullSubscriber *nats.Subscription
 
 	handler consumerHandler
-	workers []*consumerWorkerWrapper
+	workers []*jsConsumerWorkerWrapper
 
 	logger *zap.Logger
 }
@@ -174,7 +174,7 @@ func NewPullTypeConsumerWorkersPool(logger *zap.Logger,
 	}
 
 	for i := uint16(0); i < workersCount; i++ {
-		ww := &consumerWorkerWrapper{
+		ww := &jsConsumerWorkerWrapper{
 			msgChannel:       workersPool.msgChannel,
 			stopWorkerChanel: make(chan bool),
 			handler:          workersPool.handler,

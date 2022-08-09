@@ -57,9 +57,11 @@ func NewConsumerWorkersPool(logger *zap.Logger,
 	handler consumerHandler,
 	natsConn *nats.Conn,
 ) *consumerWorkerPool {
+	l := logger.Named("consumer_pool.service")
+
 	workersPool := &consumerWorkerPool{
 		handler:     handler,
-		logger:      logger,
+		logger:      l,
 		msgChannel:  msgChannel,
 		subjectName: subjectName,
 		natsConn:    natsConn,
@@ -70,7 +72,7 @@ func NewConsumerWorkersPool(logger *zap.Logger,
 			msgChannel:       workersPool.msgChannel,
 			stopWorkerChanel: make(chan bool),
 			handler:          workersPool.handler,
-			logger:           logger,
+			logger:           l.With(zap.Uint16(WorkerUnitNumberTag, i)),
 		}
 
 		workersPool.workers = append(workersPool.workers, ww)
