@@ -3,23 +3,23 @@
 
 ## Table of Contents
 
-- [addresspool_api.proto](#addresspool_api.proto)
-    - [AddressIdentity](#addressPool.AddressIdentity)
-    - [ReserveAddressRequest](#addressPool.ReserveAddressRequest)
-    - [ReserveAddressResponse](#addressPool.ReserveAddressResponse)
+- [addresspool_nats_rpc.proto](#addresspool_nats_rpc.proto)
+    - [AddressIdentity](#addressPoolNatsRpc.AddressIdentity)
+    - [ReserveAddressRequest](#addressPoolNatsRpc.ReserveAddressRequest)
+    - [ReserveAddressResponse](#addressPoolNatsRpc.ReserveAddressResponse)
   
 - [Scalar Value Types](#scalar-value-types)
 
 
 
-<a name="addresspool_api.proto"></a>
+<a name="addresspool_nats_rpc.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## addresspool_api.proto
+## addresspool_nats_rpc.proto
 
 
 
-<a name="addressPool.AddressIdentity"></a>
+<a name="addressPoolNatsRpc.AddressIdentity"></a>
 
 ### AddressIdentity
 
@@ -38,7 +38,7 @@
 
 
 
-<a name="addressPool.ReserveAddressRequest"></a>
+<a name="addressPoolNatsRpc.ReserveAddressRequest"></a>
 
 ### ReserveAddressRequest
 
@@ -53,7 +53,7 @@
 
 
 
-<a name="addressPool.ReserveAddressResponse"></a>
+<a name="addressPoolNatsRpc.ReserveAddressResponse"></a>
 
 ### ReserveAddressResponse
 
@@ -61,7 +61,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Address | [AddressIdentity](#addressPool.AddressIdentity) |  |  |
+| Address | [AddressIdentity](#addressPoolNatsRpc.AddressIdentity) |  |  |
 
 
 
