@@ -2,69 +2,45 @@ package nats
 
 import (
 	"context"
-	"errors"
 	"go.uber.org/zap"
+	"sync/atomic"
 
 	"github.com/nats-io/nats.go"
 )
 
-// ProducerWorkerPool is a minimal Worker implementation that simply wraps a
-type ProducerWorkerPool struct {
-	logger           *zap.Logger
-	msgChannel       chan *nats.Msg
-	handler          ProducerWorkerTask
-	streamName       string
-	subject          []string
-	storage          nats.StorageType
-	jsInfo           *nats.StreamInfo
-	jsConfig         *nats.StreamConfig
-	natsProducerConn nats.JetStreamContext
+// producerWorkerPool is a minimal Worker implementation that simply wraps a
+type producerWorkerPool struct {
+	logger *zap.Logger
+
+	msgChannel chan *nats.Msg
+
+	subject string
+
+	natsProducerConn *nats.Conn
 	workers          []*producerWorkerWrapper
+
+	workersCount uint32
+	rr           uint32 // round-robin index
 }
 
-func (wp *ProducerWorkerPool) Init(ctx context.Context) error {
-	streamInfo, err := wp.getStreamInfo(ctx)
-	if err != nil {
-		return err
-	}
-
-	if streamInfo == nil {
-		return ErrReturnedNilStreamInfo
-	}
-
-	for i, _ := range wp.workers {
-		wp.workers[i].SetStreamInfo(streamInfo)
-	}
+func (wp *producerWorkerPool) Init(ctx context.Context) error {
 
 	return nil
 }
 
-func (wp *ProducerWorkerPool) getStreamInfo(ctx context.Context) (*nats.StreamInfo, error) {
-	streamInfo, err := wp.natsProducerConn.StreamInfo(wp.jsConfig.Name)
-	if err != nil {
-		if errors.Is(err, nats.ErrStreamNotFound) {
-			wp.logger.Error("stream not found", zap.Error(err))
-		}
-
-		return nil, err
-	}
-
-	return streamInfo, nil
-}
-
-func (wp *ProducerWorkerPool) Run(ctx context.Context) error {
+func (wp *producerWorkerPool) Run(ctx context.Context) error {
 	wp.run()
 
 	return nil
 }
 
-func (wp *ProducerWorkerPool) run() {
+func (wp *producerWorkerPool) run() {
 	for i, _ := range wp.workers {
 		go wp.workers[i].Run()
 	}
 }
 
-func (wp *ProducerWorkerPool) Shutdown(ctx context.Context) error {
+func (wp *producerWorkerPool) Shutdown(ctx context.Context) error {
 	for _, w := range wp.workers {
 		w.Stop()
 	}
@@ -72,45 +48,37 @@ func (wp *ProducerWorkerPool) Shutdown(ctx context.Context) error {
 	return nil
 }
 
-func (wp *ProducerWorkerPool) Produce(ctx context.Context, msg *nats.Msg) {
+func (wp *producerWorkerPool) Produce(ctx context.Context, msg *nats.Msg) {
 	wp.msgChannel <- msg
 }
 
-func (wp *ProducerWorkerPool) ProduceSync(ctx context.Context, msg *nats.Msg) error {
-	return wp.workers[0].PublishMsg(msg)
+func (wp *producerWorkerPool) ProduceSync(ctx context.Context, msg *nats.Msg) error {
+	n := atomic.AddUint32(&wp.rr, 1)
+	return wp.workers[n%wp.workersCount].PublishMsg(msg)
 }
 
 func NewProducerWorkersPool(
 	logger *zap.Logger,
 	workersCount uint16,
-	streamName string,
-	subjects []string,
-	storage nats.StorageType,
-	natsProducerConn nats.JetStreamContext,
-) (*ProducerWorkerPool, error) {
+	subject string,
+	natsProducerConn *nats.Conn,
+) (*producerWorkerPool, error) {
 	l := logger.Named("producer.service").
-		With(zap.String(QueueStreamNameTag, streamName))
+		With(zap.String(QueueSubjectNameTag, subject))
 
-	streamChannel := make(chan *nats.Msg, workersCount)
+	msgChannel := make(chan *nats.Msg, workersCount)
 
-	jsConfig := &nats.StreamConfig{
-		Name:     streamName,
-		Subjects: subjects,
-		Storage:  storage,
-	}
-
-	workersPool := &ProducerWorkerPool{
+	workersPool := &producerWorkerPool{
 		logger:           l,
-		msgChannel:       streamChannel,
-		jsConfig:         jsConfig,
-		streamName:       streamName,
-		subject:          subjects,
-		storage:          storage,
+		msgChannel:       msgChannel,
 		natsProducerConn: natsProducerConn,
+		workers:          make([]*producerWorkerWrapper, workersCount),
+		workersCount:     uint32(workersCount),
+		rr:               1, // round-robin index
 	}
 
 	for i := uint16(0); i < workersCount; i++ {
-		ww := newProducerWorker(logger, i, streamChannel, streamName, subjects,
+		ww := newProducerWorker(logger, i, msgChannel, subject,
 			natsProducerConn, make(chan bool))
 
 		workersPool.workers = append(workersPool.workers, ww)
