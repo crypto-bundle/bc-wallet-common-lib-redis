@@ -81,7 +81,7 @@ func NewProducerWorkersPool(
 		ww := newProducerWorker(logger, i, msgChannel, subject,
 			natsProducerConn, make(chan bool))
 
-		workersPool.workers = append(workersPool.workers, ww)
+		workersPool.workers[i] = ww
 	}
 
 	return workersPool, nil
