@@ -1,25 +1,29 @@
 package metric
 
 import (
+	"context"
 	"net/http"
 	"strings"
 	"sync"
+	"time"
 
-	"github.com/gin-gonic/gin"
 	ginzap "github.com/gin-contrib/zap"
+	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
-	"time"
 )
 
 type Service struct {
 	mu sync.Mutex
 
-	name   string
 	cfg    config
 	logger *zap.Logger
+
+	// function is calling before gathering metrics data
+	beforeGathering func(context.Context) error
+
+	registry *prometheus.Registry
 
 	metrics map[string]prometheus.Collector
 
@@ -31,11 +35,11 @@ type Service struct {
 	cmdToObserverVecsCh chan cmdForObserverVec
 }
 
-func New(name string, cfg config, logger *zap.Logger) *Service {
+func New(cfg config, logger *zap.Logger) *Service {
 	return &Service{
-		name:                name,
 		cfg:                 cfg,
 		logger:              logger.Named("metric"),
+		registry:            prometheus.NewRegistry(),
 		cmdToCountersCh:     make(chan cmdForCounter, 1),
 		cmdToCounterVecsCh:  make(chan cmdForCounterVec, 1),
 		cmdToGaugesCh:       make(chan cmdForGauge, 1),
@@ -46,14 +50,17 @@ func New(name string, cfg config, logger *zap.Logger) *Service {
 }
 
 func (s *Service) Init() error {
+	go s.cmdLoop()
+
 	gin.SetMode(gin.ReleaseMode)
 
 	router := gin.New()
 	router.Use(
 		ginzap.Ginzap(s.logger, time.RFC3339, false),
 		ginzap.RecoveryWithZap(s.logger, true),
+		s.callBeforeGathering(),
 	)
-	router.GET(s.cfg.GetPath(), gin.WrapH(promhttp.Handler()))
+	router.GET(s.cfg.GetPath(), gin.WrapH(promhttp.HandlerFor(s.registry, promhttp.HandlerOpts{})))
 
 	server := &http.Server{
 		Addr:         s.cfg.GetAddress(),
@@ -69,15 +76,40 @@ func (s *Service) Init() error {
 		}
 	}()
 
-	go s.cmdLoop()
-
 	s.logger.Info("initiated successfully", zap.String("address", s.cfg.GetAddress()))
 
 	return nil
 }
 
+func (s *Service) callBeforeGathering() func(c *gin.Context) {
+	return func(c *gin.Context) {
+		defer func() {
+			err := recover()
+			if err != nil {
+				s.logger.Error(
+					ErrPanicRecovered.Error(),
+					zap.Error(ErrPanicRecovered),
+					zap.Any(LoggerTagRecover, err),
+				)
+			}
+
+			c.Next()
+		}()
+		if s.beforeGathering != nil {
+			err := s.beforeGathering(c)
+			if err != nil {
+				s.logger.Error(err.Error(), zap.Error(err))
+			}
+		}
+	}
+}
+
+func (s *Service) SetBeforeGathering(beforeGathering func(context.Context) error) {
+	s.beforeGathering = beforeGathering
+}
+
 func (s *Service) AddCounter(name, help string) {
-	c := promauto.NewCounter(prometheus.CounterOpts{
+	c := prometheus.NewCounter(prometheus.CounterOpts{
 		Name: s.formatMetricName(name),
 		Help: help,
 	})
@@ -86,7 +118,7 @@ func (s *Service) AddCounter(name, help string) {
 }
 
 func (s *Service) AddCounterVec(name, help string, labelNames []string) {
-	cv := promauto.NewCounterVec(prometheus.CounterOpts{
+	cv := prometheus.NewCounterVec(prometheus.CounterOpts{
 		Name: s.formatMetricName(name),
 		Help: help,
 	}, labelNames)
@@ -95,7 +127,7 @@ func (s *Service) AddCounterVec(name, help string, labelNames []string) {
 }
 
 func (s *Service) AddCounterFunc(name, help string, callback func() float64) {
-	cf := promauto.NewCounterFunc(prometheus.CounterOpts{
+	cf := prometheus.NewCounterFunc(prometheus.CounterOpts{
 		Name: s.formatMetricName(name),
 		Help: help,
 	}, callback)
@@ -104,7 +136,7 @@ func (s *Service) AddCounterFunc(name, help string, callback func() float64) {
 }
 
 func (s *Service) AddGauge(name, help string) {
-	g := promauto.NewGauge(prometheus.GaugeOpts{
+	g := prometheus.NewGauge(prometheus.GaugeOpts{
 		Name: s.formatMetricName(name),
 		Help: help,
 	})
@@ -113,7 +145,7 @@ func (s *Service) AddGauge(name, help string) {
 }
 
 func (s *Service) AddGaugeVec(name, help string, labelNames []string) {
-	gv := promauto.NewGaugeVec(prometheus.GaugeOpts{
+	gv := prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Name: s.formatMetricName(name),
 		Help: help,
 	}, labelNames)
@@ -122,7 +154,7 @@ func (s *Service) AddGaugeVec(name, help string, labelNames []string) {
 }
 
 func (s *Service) AddGaugeFunc(name, help string, callback func() float64) {
-	gf := promauto.NewGaugeFunc(prometheus.GaugeOpts{
+	gf := prometheus.NewGaugeFunc(prometheus.GaugeOpts{
 		Name: s.formatMetricName(name),
 		Help: help,
 	}, callback)
@@ -131,7 +163,7 @@ func (s *Service) AddGaugeFunc(name, help string, callback func() float64) {
 }
 
 func (s *Service) AddHistogram(name, help string, buckets []float64) {
-	h := promauto.NewHistogram(prometheus.HistogramOpts{
+	h := prometheus.NewHistogram(prometheus.HistogramOpts{
 		Name:    s.formatMetricName(name),
 		Help:    help,
 		Buckets: buckets,
@@ -141,7 +173,7 @@ func (s *Service) AddHistogram(name, help string, buckets []float64) {
 }
 
 func (s *Service) AddHistogramVec(name, help string, labelNames []string, buckets []float64) {
-	hv := promauto.NewHistogramVec(prometheus.HistogramOpts{
+	hv := prometheus.NewHistogramVec(prometheus.HistogramOpts{
 		Name:    s.formatMetricName(name),
 		Help:    help,
 		Buckets: buckets,
@@ -151,7 +183,7 @@ func (s *Service) AddHistogramVec(name, help string, labelNames []string, bucket
 }
 
 func (s *Service) AddSummary(name, help string) {
-	summary := promauto.NewSummary(prometheus.SummaryOpts{
+	summary := prometheus.NewSummary(prometheus.SummaryOpts{
 		Name: s.formatMetricName(name),
 		Help: help,
 	})
@@ -160,7 +192,7 @@ func (s *Service) AddSummary(name, help string) {
 }
 
 func (s *Service) AddSummaryVec(name, help string, labelNames []string) {
-	sv := promauto.NewSummaryVec(prometheus.SummaryOpts{
+	sv := prometheus.NewSummaryVec(prometheus.SummaryOpts{
 		Name: s.formatMetricName(name),
 		Help: help,
 	}, labelNames)
@@ -253,10 +285,17 @@ func (s *Service) GetObserverVec(name string) (prometheus.ObserverVec, error) {
 }
 
 func (s *Service) formatMetricName(name string) string {
-	return s.name + "_" + strings.ReplaceAll(name, "-", "_")
+	prefix := s.cfg.GetMetricNamePrefix()
+	if prefix != "" {
+		return strings.ReplaceAll(prefix+"_"+name, "-", "_")
+	}
+
+	return name
 }
 
 func (s *Service) addMetric(name string, metric prometheus.Collector) {
+	s.registry.MustRegister(metric)
+
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -269,7 +308,7 @@ func (s *Service) addMetric(name string, metric prometheus.Collector) {
 
 func (s *Service) cmdLoop() {
 	defer func() {
-		s.logger.Error("panic recovered", zap.Any(LoggerTagRecover, recover()))
+		s.logger.Error(ErrPanicRecovered.Error(), zap.Error(ErrPanicRecovered), zap.Any(LoggerTagRecover, recover()))
 
 		s.cmdLoop()
 	}()

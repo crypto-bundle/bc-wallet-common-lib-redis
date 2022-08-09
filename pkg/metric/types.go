@@ -1,8 +1,14 @@
 package metric
 
+import (
+	"context"
+)
+
 type config interface {
 	GetAddress() string
 	GetPath() string
+	GetMetricNamePrefix() string
+	SetMetricNamePrefix(metricNamePrefix string)
 }
 
 type cmd interface {
@@ -44,6 +50,7 @@ type cmdForObserverVec interface {
 
 type service interface {
 	Init() error
+	SetBeforeGathering(beforeCollect func(context.Context) error)
 	AddCounter(counterName, help string)
 	AddCounterVec(counterName, help string, labelNames []string)
 	AddCounterFunc(counterName, help string, callback func() float64)
