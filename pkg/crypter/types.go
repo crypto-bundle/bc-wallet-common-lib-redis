@@ -5,5 +5,5 @@ import (
 )
 
 type config interface {
-	GetKey() (*rsa.PrivateKey, error)
+	GetPrivateKey() *rsa.PrivateKey
 }
