@@ -12,6 +12,7 @@ type consumerWorkerPool struct {
 	msgChannel chan *nats.Msg
 
 	subjectName string
+	groupName   string
 
 	handler consumerHandler
 	workers []*consumerWorkerWrapper
@@ -20,7 +21,7 @@ type consumerWorkerPool struct {
 }
 
 func (wp *consumerWorkerPool) Init(ctx context.Context) error {
-	_, err := wp.natsConn.ChanSubscribe(wp.subjectName, wp.msgChannel)
+	_, err := wp.natsConn.ChanQueueSubscribe(wp.subjectName, wp.groupName, wp.msgChannel)
 	if err != nil {
 		return err
 	}
@@ -53,6 +54,7 @@ func (wp *consumerWorkerPool) Shutdown(ctx context.Context) error {
 func NewConsumerWorkersPool(logger *zap.Logger,
 	msgChannel chan *nats.Msg,
 	subjectName string,
+	groupName string,
 	workersCount uint16,
 	handler consumerHandler,
 	natsConn *nats.Conn,
@@ -64,6 +66,7 @@ func NewConsumerWorkersPool(logger *zap.Logger,
 		logger:      l,
 		msgChannel:  msgChannel,
 		subjectName: subjectName,
+		groupName:   groupName,
 		natsConn:    natsConn,
 	}
 

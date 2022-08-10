@@ -14,7 +14,8 @@ type producerWorkerPool struct {
 
 	msgChannel chan *nats.Msg
 
-	subject string
+	subjectName string
+	groupName   string
 
 	natsProducerConn *nats.Conn
 	workers          []*producerWorkerWrapper
@@ -60,16 +61,21 @@ func (wp *producerWorkerPool) ProduceSync(ctx context.Context, msg *nats.Msg) er
 func NewProducerWorkersPool(
 	logger *zap.Logger,
 	workersCount uint16,
-	subject string,
+	subjectName string,
+	groupName string,
 	natsProducerConn *nats.Conn,
 ) (*producerWorkerPool, error) {
 	l := logger.Named("producer.service").
-		With(zap.String(QueueSubjectNameTag, subject))
+		With(zap.String(QueueSubjectNameTag, subjectName))
 
 	msgChannel := make(chan *nats.Msg, workersCount)
 
 	workersPool := &producerWorkerPool{
-		logger:           l,
+		logger: l,
+
+		subjectName: subjectName,
+		groupName:   groupName,
+
 		msgChannel:       msgChannel,
 		natsProducerConn: natsProducerConn,
 		workers:          make([]*producerWorkerWrapper, workersCount),
@@ -78,7 +84,7 @@ func NewProducerWorkersPool(
 	}
 
 	for i := uint16(0); i < workersCount; i++ {
-		ww := newProducerWorker(logger, i, msgChannel, subject,
+		ww := newProducerWorker(logger, i, msgChannel, subjectName,
 			natsProducerConn, make(chan bool))
 
 		workersPool.workers[i] = ww
