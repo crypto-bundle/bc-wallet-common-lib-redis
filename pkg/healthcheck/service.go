@@ -4,8 +4,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
-	ginzap "github.com/gin-contrib/zap"
 	"go.uber.org/zap"
 )
 
@@ -48,24 +46,19 @@ func New(cfg config, livenessProbe, readinessProbe, startupProbe Probe, logger *
 }
 
 func (s *Service) Init() error {
-	if !s.cfg.IsDebug() {
-		gin.SetMode(gin.ReleaseMode)
-	}
+	mux := http.NewServeMux()
+	mux.HandleFunc(s.cfg.GetLivenessPath(), s.handler.livenessHandler)
+	mux.HandleFunc(s.cfg.GetReadinessPath(), s.handler.getReadinessHandler)
+	mux.HandleFunc(s.cfg.GetStartupPath(), s.handler.getStartupHandler)
 
-	router := gin.New()
-	router.Use(
-		ginzap.Ginzap(s.logger, time.RFC3339, false),
-		ginzap.RecoveryWithZap(s.logger, true),
-	)
-	router.GET(s.cfg.GetLivenessPath(), s.handler.Liveness)
-	router.GET(s.cfg.GetReadinessPath(), s.handler.Readiness)
-	router.GET(s.cfg.GetStartupPath(), s.handler.Startup)
+	middleware := NewMiddleware(s.logger)
 
 	server := &http.Server{
 		Addr:         s.cfg.GetAddress(),
-		Handler:      router,
+		Handler:      middleware.Wrap(mux, s.cfg.IsDebug()),
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
+		ErrorLog:     zap.NewStdLog(s.logger),
 	}
 
 	go func() {

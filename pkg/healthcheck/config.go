@@ -4,14 +4,12 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
-const ConfigPrefix = "HEALTH_CHECK"
-
 type Config struct {
-	HttpPort      string `envconfig:"HTTP_PORT" default:"8081"`
-	LivenessPath  string `envconfig:"LIVENESS_PATH" default:"/liveness"`
-	ReadinessPath string `envconfig:"READINESS_PATH" default:"/readiness"`
-	StartupPath   string `envconfig:"STARTUP_PATH" default:"/startup"`
-	Debug         bool   `envconfig:"DEBUG"`
+	Debug         bool   `envconfig:"HEALTH_CHECK_DEBUG"`
+	HttpPort      string `envconfig:"HEALTH_CHECK_HTTP_PORT" default:"8081"`
+	LivenessPath  string `envconfig:"HEALTH_CHECK_LIVENESS_PATH" default:"/liveness"`
+	ReadinessPath string `envconfig:"HEALTH_CHECK_READINESS_PATH" default:"/readiness"`
+	StartupPath   string `envconfig:"HEALTH_CHECK_STARTUP_PATH" default:"/startup"`
 }
 
 func (c *Config) IsDebug() bool {
@@ -36,5 +34,5 @@ func (c *Config) GetStartupPath() string {
 
 // Prepare variables to static configuration
 func (c *Config) Prepare() error {
-	return envconfig.Process(ConfigPrefix, c)
+	return envconfig.Process("", c)
 }
