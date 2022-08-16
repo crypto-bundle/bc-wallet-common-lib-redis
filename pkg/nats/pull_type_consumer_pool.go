@@ -23,11 +23,13 @@ type PullTypeConsumerWorkerPool struct {
 
 	subjectName string
 	streamName  string
+	durableName string
 	durable     bool
 
-	ticker         *time.Ticker
-	tickerTimeout  time.Duration
-	pullSubscriber *nats.Subscription
+	ticker            *time.Ticker
+	tickerTimeout     time.Duration
+	fetchLimitPerPull uint16
+	pullSubscriber    *nats.Subscription
 
 	handler consumerHandler
 	workers []*jsConsumerWorkerWrapper
@@ -47,18 +49,18 @@ func (wp *PullTypeConsumerWorkerPool) Init(ctx context.Context) error {
 
 	wp.ticker = time.NewTicker(wp.tickerTimeout)
 
-	consumerInfo, err := wp.getOrCreateSubscriber(ctx)
-	if err != nil {
-		return err
-	}
-
-	if consumerInfo == nil {
-		return ErrReturnedNilConsumerInfo
-	}
+	//consumerInfo, err := wp.getOrCreateSubscriber(ctx)
+	//if err != nil {
+	//	return err
+	//}
+	//
+	//if consumerInfo == nil {
+	//	return ErrReturnedNilConsumerInfo
+	//}
 
 	streamWilldCard := wp.streamName + ".*"
 
-	subs, err := wp.jsConsumerConn.PullSubscribe(streamWilldCard, wp.subjectName)
+	subs, err := wp.jsConsumerConn.PullSubscribe(streamWilldCard, wp.durableName)
 	if err != nil {
 		return err
 	}
@@ -128,14 +130,22 @@ func (wp *PullTypeConsumerWorkerPool) run() error {
 		for {
 			select {
 			case <-wp.ticker.C:
-				msgList, fetchErr := wp.pullSubscriber.Fetch(3)
-				if fetchErr != nil {
-					wp.logger.Error("unable fetch data", zap.Error(fetchErr))
+				msgList, fetchErr := wp.pullSubscriber.Fetch(int(wp.fetchLimitPerPull),
+					nats.MaxWait(wp.tickerTimeout*50))
+
+				if fetchErr == nil {
+					for i := 0; i != len(msgList); i++ {
+						wp.msgChannel <- msgList[i]
+					}
+
+					continue
 				}
 
-				for i := 0; i != len(msgList); i++ {
-					wp.msgChannel <- msgList[i]
+				if fetchErr != nil && errors.Is(fetchErr, nats.ErrTimeout) {
+					continue
 				}
+
+				wp.logger.Error("unable fetch data", zap.Error(fetchErr))
 			}
 		}
 	}()
@@ -149,6 +159,10 @@ func (wp *PullTypeConsumerWorkerPool) Shutdown(ctx context.Context) error {
 	}
 
 	wp.ticker.Stop()
+	err := wp.pullSubscriber.Unsubscribe()
+	if err != nil {
+		wp.logger.Warn("unable to unsubscribe")
+	}
 
 	return nil
 }
@@ -157,20 +171,24 @@ func NewPullTypeConsumerWorkersPool(logger *zap.Logger,
 	msgChannel chan *nats.Msg,
 	streamName string,
 	subjectName string,
+	durableName string,
 	workersCount uint16,
 	tickerTimeout time.Duration,
+	fetchLimitPerPull uint16,
 	handler consumerHandler,
 	jsNatsConn nats.JetStreamContext,
 ) *PullTypeConsumerWorkerPool {
 	workersPool := &PullTypeConsumerWorkerPool{
-		handler:        handler,
-		logger:         logger,
-		msgChannel:     msgChannel,
-		subjectName:    subjectName,
-		streamName:     streamName,
-		jsConsumerConn: jsNatsConn,
-		tickerTimeout:  tickerTimeout,
-		ticker:         nil,
+		handler:           handler,
+		logger:            logger,
+		msgChannel:        msgChannel,
+		durableName:       durableName,
+		subjectName:       subjectName,
+		streamName:        streamName,
+		jsConsumerConn:    jsNatsConn,
+		tickerTimeout:     tickerTimeout,
+		fetchLimitPerPull: fetchLimitPerPull,
+		ticker:            nil,
 	}
 
 	for i := uint16(0); i < workersCount; i++ {

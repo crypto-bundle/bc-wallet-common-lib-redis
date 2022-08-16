@@ -54,7 +54,7 @@ func (wp *consumerWorkerPool) Shutdown(ctx context.Context) error {
 func NewConsumerWorkersPool(logger *zap.Logger,
 	msgChannel chan *nats.Msg,
 	subjectName string,
-	groupName string,
+	queueGroupName string,
 	workersCount uint16,
 	handler consumerHandler,
 	natsConn *nats.Conn,
@@ -66,7 +66,7 @@ func NewConsumerWorkersPool(logger *zap.Logger,
 		logger:      l,
 		msgChannel:  msgChannel,
 		subjectName: subjectName,
-		groupName:   groupName,
+		groupName:   queueGroupName,
 		natsConn:    natsConn,
 	}
 
