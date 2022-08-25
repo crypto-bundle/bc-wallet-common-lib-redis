@@ -33,6 +33,7 @@ enum BcTxStatus {
   BC_TX_IN_MINING = 1;
   BC_TX_SUCCESS = 2;
   BC_TX_EXECUTION_FAILED = 3;
+  BC_TX_WAITING_FOR_CONFIRMATIONS = 4;
 }
 
 message BcTxIdentity {
