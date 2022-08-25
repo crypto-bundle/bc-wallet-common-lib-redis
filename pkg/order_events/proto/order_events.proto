@@ -41,10 +41,16 @@ message BcTxIdentity {
   bytes Meta = 2;
 }
 
+message CurrencyIdentity {
+  string Symbol = 1;
+  uint32 Decimals = 2;
+}
+
 message BcTxOperation {
   uint32 Index = 1;
   string Address = 2;
   uint64 Amount = 4;
+  CurrencyIdentity CurrencyIdentity = 5;
 }
 
 message BcTxInfo {

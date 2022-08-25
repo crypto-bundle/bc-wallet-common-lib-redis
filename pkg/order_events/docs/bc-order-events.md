@@ -7,6 +7,7 @@
     - [BcTxIdentity](#order_events.BcTxIdentity)
     - [BcTxInfo](#order_events.BcTxInfo)
     - [BcTxOperation](#order_events.BcTxOperation)
+    - [CurrencyIdentity](#order_events.CurrencyIdentity)
     - [Order](#order_events.Order)
     - [OrderEvent](#order_events.OrderEvent)
     - [OrderIdentity](#order_events.OrderIdentity)
@@ -75,6 +76,23 @@
 | Index | [uint32](#uint32) |  |  |
 | Address | [string](#string) |  |  |
 | Amount | [uint64](#uint64) |  |  |
+| CurrencyIdentity | [CurrencyIdentity](#order_events.CurrencyIdentity) |  |  |
+
+
+
+
+
+
+<a name="order_events.CurrencyIdentity"></a>
+
+### CurrencyIdentity
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Symbol | [string](#string) |  |  |
+| Decimals | [uint32](#uint32) |  |  |
 
 
 
