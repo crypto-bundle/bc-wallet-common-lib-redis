@@ -58,12 +58,16 @@ message BcTxOperation {
   CurrencyIdentity CurrencyIdentity = 5;
 }
 
+message OperationsList {
+  repeated BcTxOperation Operations = 1;
+}
+
 message BcTxInfo {
   uint32 NetworkIdentifier = 1;
   BcTxIdentity BcTxIdentifier = 2;
   uint64 Confirmations = 3;
   uint64 BlockNumber = 4;
-  map<string, BcTxOperation> Operations = 5;
+  map<string, OperationsList> Operations = 5;
   BcTxStatus Status = 6;
   uint64 RealFee = 7;
   string ExplorerURL = 8;

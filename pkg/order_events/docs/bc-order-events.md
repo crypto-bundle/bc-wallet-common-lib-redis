@@ -9,6 +9,7 @@
     - [BcTxInfo.OperationsEntry](#order_events.BcTxInfo.OperationsEntry)
     - [BcTxOperation](#order_events.BcTxOperation)
     - [CurrencyIdentity](#order_events.CurrencyIdentity)
+    - [OperationsList](#order_events.OperationsList)
     - [Order](#order_events.Order)
     - [OrderEvent](#order_events.OrderEvent)
     - [OrderIdentity](#order_events.OrderIdentity)
@@ -76,7 +77,7 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | key | [string](#string) |  |  |
-| value | [BcTxOperation](#order_events.BcTxOperation) |  |  |
+| value | [OperationsList](#order_events.OperationsList) |  |  |
 
 
 
@@ -111,6 +112,21 @@
 | ----- | ---- | ----- | ----------- |
 | Symbol | [string](#string) |  |  |
 | Decimals | [uint32](#uint32) |  |  |
+
+
+
+
+
+
+<a name="order_events.OperationsList"></a>
+
+### OperationsList
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Operations | [BcTxOperation](#order_events.BcTxOperation) | repeated |  |
 
 
 
