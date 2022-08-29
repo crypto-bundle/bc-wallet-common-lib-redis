@@ -6,6 +6,7 @@
 - [order_events.proto](#order_events.proto)
     - [BcTxIdentity](#order_events.BcTxIdentity)
     - [BcTxInfo](#order_events.BcTxInfo)
+    - [BcTxInfo.OperationsEntry](#order_events.BcTxInfo.OperationsEntry)
     - [BcTxOperation](#order_events.BcTxOperation)
     - [CurrencyIdentity](#order_events.CurrencyIdentity)
     - [Order](#order_events.Order)
@@ -13,6 +14,7 @@
     - [OrderIdentity](#order_events.OrderIdentity)
   
     - [BcTxStatus](#order_events.BcTxStatus)
+    - [OperationType](#order_events.OperationType)
     - [OrderStatus](#order_events.OrderStatus)
     - [OrderType](#order_events.OrderType)
   
@@ -55,10 +57,26 @@
 | BcTxIdentifier | [BcTxIdentity](#order_events.BcTxIdentity) |  |  |
 | Confirmations | [uint64](#uint64) |  |  |
 | BlockNumber | [uint64](#uint64) |  |  |
-| Operations | [BcTxOperation](#order_events.BcTxOperation) | repeated |  |
+| Operations | [BcTxInfo.OperationsEntry](#order_events.BcTxInfo.OperationsEntry) | repeated |  |
 | Status | [BcTxStatus](#order_events.BcTxStatus) |  |  |
 | RealFee | [uint64](#uint64) |  |  |
 | ExplorerURL | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="order_events.BcTxInfo.OperationsEntry"></a>
+
+### BcTxInfo.OperationsEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [BcTxOperation](#order_events.BcTxOperation) |  |  |
 
 
 
@@ -181,6 +199,19 @@
 | BC_TX_SUCCESS | 2 |  |
 | BC_TX_EXECUTION_FAILED | 3 |  |
 | BC_TX_WAITING_FOR_CONFIRMATIONS | 4 |  |
+
+
+
+<a name="order_events.OperationType"></a>
+
+### OperationType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| OPERATION_TYPE_PLACEHOLDER | 0 |  |
+| OPERATION_TYPE_SPENT | 1 |  |
+| OPERATION_TYPE_RECEIVE | 2 |  |
 
 
 

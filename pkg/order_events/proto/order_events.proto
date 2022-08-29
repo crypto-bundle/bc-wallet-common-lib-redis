@@ -21,6 +21,11 @@ enum OrderStatus {
   CANCELED = 7;
 }
 
+enum OperationType {
+  OPERATION_TYPE_PLACEHOLDER = 0;
+  OPERATION_TYPE_SPENT = 1;
+  OPERATION_TYPE_RECEIVE = 2;
+}
 
 message OrderIdentity {
   string UUID = 1;
@@ -58,7 +63,7 @@ message BcTxInfo {
   BcTxIdentity BcTxIdentifier = 2;
   uint64 Confirmations = 3;
   uint64 BlockNumber = 4;
-  repeated BcTxOperation Operations = 5;
+  map<string, BcTxOperation> Operations = 5;
   BcTxStatus Status = 6;
   uint64 RealFee = 7;
   string ExplorerURL = 8;
