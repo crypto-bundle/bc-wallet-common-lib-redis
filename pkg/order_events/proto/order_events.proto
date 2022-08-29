@@ -25,6 +25,7 @@ enum OperationType {
   OPERATION_TYPE_PLACEHOLDER = 0;
   OPERATION_TYPE_SPENT = 1;
   OPERATION_TYPE_RECEIVE = 2;
+  OPERATION_TYPE_FEE = 3;
 }
 
 message OrderIdentity {
