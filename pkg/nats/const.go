@@ -1,7 +1,8 @@
 package nats
 
 const (
-	SubjectTag = "subject"
+	SubjectTag     = "subject"
 	DeliveredCount = "delivered_count"
-)
 
+	ResubscribeTag = "resubscribe_attempt"
+)

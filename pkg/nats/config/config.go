@@ -22,6 +22,10 @@ type NatsConfig struct {
 
 	NatsWorkersPerConsumer uint16 `env:"NATS_WORKER_PER_CONSUMER" envDefault:"5"`
 
+	NatsSubscriptionRetry        bool          `env:"NATS_WORKER_SUBSCRIPTION_RETRY" envDefault:"true"`
+	NatsSubscriptionRetryCount   uint16        `env:"NATS_WORKER_SUBSCRIPTION_RETRY_COUNT" envDefault:"3"`
+	NatsSubscriptionRetryTimeout time.Duration `env:"NATS_WORKER_SUBSCRIPTION_RETRY_TIMEOUT" envDefault:"3s"`
+
 	nastAddresses []string
 }
 

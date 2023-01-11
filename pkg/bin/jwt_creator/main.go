@@ -4,7 +4,7 @@ import (
 	"flag"
 	"log"
 
-	jwtvalitator "github.com/cryptowize-tech/bc-wallet-common/pkg/jwt"
+	jwtvalitator "github.com/crypto-bundle/bc-wallet-common/pkg/jwt"
 
 	_ "github.com/mailru/easyjson/gen"
 	"go.uber.org/zap"

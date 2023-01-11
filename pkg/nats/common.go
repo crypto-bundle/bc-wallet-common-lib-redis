@@ -2,7 +2,7 @@ package nats
 
 import (
 	"context"
-	"github.com/cryptowize-tech/bc-wallet-common/pkg/queue"
+	"github.com/crypto-bundle/bc-wallet-common/pkg/queue"
 	"time"
 
 	"github.com/nats-io/nats.go"
@@ -22,4 +22,16 @@ type configParams interface {
 
 type consumerHandler interface {
 	Process(ctx context.Context, msg *nats.Msg) (queue.ConsumerDirective, error)
+}
+
+type subscriptionService interface {
+	Healthcheck(ctx context.Context) bool
+	Init(ctx context.Context) error
+	Run(ctx context.Context) error
+	Shutdown(ctx context.Context) error
+}
+
+type consumerWorker interface {
+	Run(ctx context.Context) error
+	ProcessMsg(msg *nats.Msg)
 }

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package order_events;
 
-option go_package = "github.com/cryptowize-tech/bc-wallet-common/pkg/order_events";
+option go_package = "github.com/crypto-bundle/bc-wallet-common/pkg/order_events";
 
 enum OrderType {
   PLACEHOLDER_ORDER_TYPE = 0;

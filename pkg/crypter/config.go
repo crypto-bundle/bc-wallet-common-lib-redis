@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cryptowize-tech/bc-wallet-common/pkg/env"
+	"github.com/crypto-bundle/bc-wallet-common/pkg/env"
 
 	"github.com/kelseyhightower/envconfig"
 )

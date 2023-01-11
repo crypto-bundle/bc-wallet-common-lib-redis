@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package addressPoolNatsRpc;
 
-option go_package = "github.com/cryptowize-tech/bc-wallet-common/pkg/natsrpc/addresspool";
+option go_package = "github.com/crypto-bundle/bc-wallet-common/pkg/natsrpc/addresspool";
 
 message AddressIdentity {
   string UUID = 1;
