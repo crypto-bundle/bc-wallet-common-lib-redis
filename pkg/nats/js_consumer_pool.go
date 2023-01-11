@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/nats-io/nats.go"
 	"go.uber.org/zap"
 )
 
@@ -15,100 +14,30 @@ var (
 
 // jsConsumerWorkerPool is a minimal Worker implementation that simply wraps a
 type jsConsumerWorkerPool struct {
-	msgChannel chan *nats.Msg
+	subscriptionSrv subscriptionService
 
-	jsInfo         *nats.StreamInfo
-	jsConfig       *nats.StreamConfig
-	jsConsumerConn nats.JetStreamContext
-
-	subjectName string
-	streamName  string
-	durable     bool
-
-	handler consumerHandler
 	workers []*jsConsumerWorkerWrapper
 
 	logger *zap.Logger
 }
 
 func (wp *jsConsumerWorkerPool) Init(ctx context.Context) error {
-	streamInfo, err := wp.getOrCreateStream(ctx)
-	if err != nil {
-		return err
-	}
-
-	if streamInfo == nil {
-		return ErrReturnedNilStreamInfo
-	}
-
-	//consumerInfo, err := wp.getOrCreateSubscriber(ctx)
-	//if err != nil {
-	//	return err
-	//}
-	//
-	//if consumerInfo == nil {
-	//	return ErrReturnedNilConsumerInfo
-	//}
-
-	_, err = wp.jsConsumerConn.ChanSubscribe(wp.subjectName, wp.msgChannel)
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 
-func (wp *jsConsumerWorkerPool) getOrCreateStream(ctx context.Context) (*nats.StreamInfo, error) {
-	streamInfo, err := wp.jsConsumerConn.StreamInfo(wp.streamName)
-	if err != nil {
-		if errors.Is(err, nats.ErrStreamNotFound) {
-			stream, addStreamErr := wp.jsConsumerConn.AddStream(wp.jsConfig)
-			if addStreamErr != nil {
-				return nil, addStreamErr
-			}
-
-			streamInfo = stream
-		}
-
-		return nil, err
-	}
-
-	return streamInfo, nil
-}
-
-func (wp *jsConsumerWorkerPool) getOrCreateSubscriber(ctx context.Context) (*nats.ConsumerInfo, error) {
-	consumerInfo, err := wp.jsConsumerConn.ConsumerInfo(wp.streamName, wp.subjectName)
-	if err != nil {
-		if errors.Is(err, nats.ErrConsumerNotActive) {
-			consumerConfig := &nats.ConsumerConfig{
-				Durable: wp.subjectName,
-			}
-
-			consumer, addErr := wp.jsConsumerConn.AddConsumer(wp.streamName, consumerConfig)
-			if err != nil {
-				return nil, addErr
-			}
-
-			consumerInfo = consumer
-		}
-
-		return nil, err
-	}
-
-	return consumerInfo, nil
+func (wp *jsConsumerWorkerPool) Healthcheck(ctx context.Context) bool {
+	return wp.subscriptionSrv.Healthcheck(ctx)
 }
 
 func (wp *jsConsumerWorkerPool) Run(ctx context.Context) error {
-	wp.run()
+	wp.run(ctx)
 
 	return nil
 }
 
-func (wp *jsConsumerWorkerPool) run() {
+func (wp *jsConsumerWorkerPool) run(ctx context.Context) {
 	for _, w := range wp.workers {
-		w.msgChannel = wp.msgChannel
-
-		go w.Start()
+		go w.Run(ctx)
 	}
 }
 
@@ -120,23 +49,15 @@ func (wp *jsConsumerWorkerPool) Shutdown(ctx context.Context) error {
 	return nil
 }
 
-func NewJsConsumerWorkersPool(logger *zap.Logger,
-	msgChannel chan *nats.Msg,
-	streamName string,
-	subjectName string,
+func NewConsumerWorkersPool(logger *zap.Logger,
 	workersCount uint16,
-	handler consumerHandler,
-	jsNatsConn nats.JetStreamContext,
+	subscriptionSrv subscriptionService,
 ) *jsConsumerWorkerPool {
-	l := logger.Named("consumer_pool.service")
+	l := logger.Named("consumer_worker_pool")
 
 	workersPool := &jsConsumerWorkerPool{
-		handler:        handler,
-		logger:         l,
-		msgChannel:     msgChannel,
-		subjectName:    subjectName,
-		streamName:     streamName,
-		jsConsumerConn: jsNatsConn,
+		logger:          l,
+		subscriptionSrv: subscriptionSrv,
 	}
 
 	for i := uint16(0); i < workersCount; i++ {

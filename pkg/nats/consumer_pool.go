@@ -4,41 +4,35 @@ import (
 	"context"
 	"github.com/nats-io/nats.go"
 	"go.uber.org/zap"
+	"time"
 )
 
 // consumerWorkerPool is a minimal Worker implementation that simply wraps a
 type consumerWorkerPool struct {
-	natsConn   *nats.Conn
-	msgChannel chan *nats.Msg
-
-	subjectName string
-	groupName   string
-
 	handler consumerHandler
 	workers []*consumerWorkerWrapper
+
+	subscriptionSrv subscriptionService
 
 	logger *zap.Logger
 }
 
-func (wp *consumerWorkerPool) Init(ctx context.Context) error {
-	_, err := wp.natsConn.ChanQueueSubscribe(wp.subjectName, wp.groupName, wp.msgChannel)
-	if err != nil {
-		return err
-	}
+func (wp *consumerWorkerPool) Healthcheck(ctx context.Context) bool {
+	return wp.subscriptionSrv.Healthcheck(ctx)
+}
 
-	return nil
+func (wp *consumerWorkerPool) Init(ctx context.Context) error {
+	return wp.subscriptionSrv.Init(ctx)
 }
 
 func (wp *consumerWorkerPool) Run(ctx context.Context) error {
 	wp.run()
 
-	return nil
+	return wp.subscriptionSrv.Run(ctx)
 }
 
 func (wp *consumerWorkerPool) run() {
 	for _, w := range wp.workers {
-		w.msgChannel = wp.msgChannel
-
 		go w.Start()
 	}
 }
@@ -53,26 +47,34 @@ func (wp *consumerWorkerPool) Shutdown(ctx context.Context) error {
 
 func NewConsumerWorkersPool(logger *zap.Logger,
 	msgChannel chan *nats.Msg,
-	subjectName string,
-	queueGroupName string,
+
 	workersCount uint16,
+
+	subjectName string,
+	groupName string,
+
+	autoReSubscribe bool,
+	autoReSubscribeCount uint16,
+	autoReSubscribeTimeout time.Duration,
+
 	handler consumerHandler,
 	natsConn *nats.Conn,
 ) *consumerWorkerPool {
-	l := logger.Named("consumer_pool.service")
+	l := logger.Named("consumer_pool")
+
+	subscriptionSrv := newPushSubscriptionService(l, natsConn, subjectName, groupName, autoReSubscribe,
+		autoReSubscribeCount, autoReSubscribeTimeout, msgChannel)
 
 	workersPool := &consumerWorkerPool{
-		handler:     handler,
-		logger:      l,
-		msgChannel:  msgChannel,
-		subjectName: subjectName,
-		groupName:   queueGroupName,
-		natsConn:    natsConn,
+		handler: handler,
+		logger:  l,
+
+		subscriptionSrv: subscriptionSrv,
 	}
 
 	for i := uint16(0); i < workersCount; i++ {
 		ww := &consumerWorkerWrapper{
-			msgChannel:       workersPool.msgChannel,
+			msgChannel:       msgChannel,
 			stopWorkerChanel: make(chan bool),
 			handler:          workersPool.handler,
 			logger:           l.With(zap.Uint16(WorkerUnitNumberTag, i)),
