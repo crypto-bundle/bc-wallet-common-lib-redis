@@ -2,8 +2,7 @@ package healthcheck
 
 import (
 	"net/http"
-
-	"github.com/gin-gonic/gin"
+	"io"
 )
 
 type httpHandler struct {
@@ -20,29 +19,29 @@ func NewHttpHandler(livenessProbe, readinessProbe, startupProbe Probe) *httpHand
 	}
 }
 
-func (h *httpHandler) Liveness(ctx *gin.Context) {
-	err := h.livenessProbe.Do(ctx)
+func (h *httpHandler) livenessHandler(w http.ResponseWriter, r *http.Request) {
+	err := h.livenessProbe.Do(r.Context())
 	if err != nil {
-		ctx.AbortWithStatus(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+	} else {
+		io.WriteString(w, "ok")
 	}
-
-	ctx.String(http.StatusOK, "ok")
 }
 
-func (h *httpHandler) Readiness(ctx *gin.Context) {
-	err := h.readinessProbe.Do(ctx)
+func (h *httpHandler) getReadinessHandler(w http.ResponseWriter, r *http.Request) {
+	err := h.readinessProbe.Do(r.Context())
 	if err != nil {
-		ctx.AbortWithStatus(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+	} else {
+		io.WriteString(w, "ok")
 	}
-
-	ctx.String(http.StatusOK, "ok")
 }
 
-func (h *httpHandler) Startup(ctx *gin.Context) {
-	err := h.startupProbe.Do(ctx)
+func (h *httpHandler) getStartupHandler(w http.ResponseWriter, r *http.Request) {
+	err := h.startupProbe.Do(r.Context())
 	if err != nil {
-		ctx.AbortWithStatus(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+	} else {
+		io.WriteString(w, "ok")
 	}
-
-	ctx.String(http.StatusOK, "ok")
 }
