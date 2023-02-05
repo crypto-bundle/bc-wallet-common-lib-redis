@@ -24,12 +24,13 @@ type HTTPConfig struct {
 	HealthCheckStartupHTTPPath         string        `envconfig:"HEALTH_CHECK_STARTUP_HTTP_PATH" default:"/startup"`
 }
 
-func (c *HTTPConfig) GetLivenessParams() *unitParams {
+func (c *HTTPConfig) GetStartupParams() *unitParams {
 	return &unitParams{
-		HTTPListenPort:   c.HealthCheckLivenessHTTPPort,
-		HTTPReadTimeout:  c.HealthCheckLivenessHTTPReadTimeout,
-		HTTPWriteTimeout: c.HealthCheckLivenessHTTPWriteTimeout,
-		HTTPPath:         c.HealthCheckLivenessHTTPPath,
+		HTTPListenPort:   c.HealthCheckStartupHTTPPort,
+		HTTPReadTimeout:  c.HealthCheckStartupHTTPReadTimeout,
+		HTTPWriteTimeout: c.HealthCheckStartupHTTPWriteTimeout,
+		HTTPPath:         c.HealthCheckStartupHTTPPath,
+		ProbeName:        ProbeNameStartup,
 	}
 }
 
@@ -39,15 +40,17 @@ func (c *HTTPConfig) GetReadinessParams() *unitParams {
 		HTTPReadTimeout:  c.HealthCheckReadinessHTTPReadTimeout,
 		HTTPWriteTimeout: c.HealthCheckReadinessHTTPWriteTimeout,
 		HTTPPath:         c.HealthCheckReadinessHTTPPath,
+		ProbeName:        ProbeNameRediness,
 	}
 }
 
-func (c *HTTPConfig) GetStartupParams() *unitParams {
+func (c *HTTPConfig) GetLivenessParams() *unitParams {
 	return &unitParams{
-		HTTPListenPort:   c.HealthCheckStartupHTTPPort,
-		HTTPReadTimeout:  c.HealthCheckStartupHTTPReadTimeout,
-		HTTPWriteTimeout: c.HealthCheckStartupHTTPWriteTimeout,
-		HTTPPath:         c.HealthCheckStartupHTTPPath,
+		HTTPListenPort:   c.HealthCheckLivenessHTTPPort,
+		HTTPReadTimeout:  c.HealthCheckLivenessHTTPReadTimeout,
+		HTTPWriteTimeout: c.HealthCheckLivenessHTTPWriteTimeout,
+		HTTPPath:         c.HealthCheckLivenessHTTPPath,
+		ProbeName:        ProbeNameLiveness,
 	}
 }
 
@@ -61,6 +64,7 @@ type unitParams struct {
 	HTTPReadTimeout  time.Duration
 	HTTPWriteTimeout time.Duration
 	HTTPPath         string
+	ProbeName        string
 }
 
 func (p *unitParams) GetListenAddress() string {
@@ -77,4 +81,8 @@ func (p *unitParams) GetHTTPWriteTimeout() time.Duration {
 
 func (p *unitParams) GetRequestURL() string {
 	return p.HTTPPath
+}
+
+func (p *unitParams) GetProbeName() string {
+	return p.ProbeName
 }

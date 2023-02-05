@@ -69,7 +69,5 @@ func (m *middleware) GetHTTPHandler() http.Handler {
 }
 
 func newMiddleware(l *zap.Logger) *middleware {
-	mw := &middleware{logger: l}
-	mw.With(newRecoveryMiddleware(l))
 	return &middleware{logger: l}
 }

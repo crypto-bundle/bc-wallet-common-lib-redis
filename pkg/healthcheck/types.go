@@ -2,24 +2,37 @@ package healthcheck
 
 //go:generate easyjson types.go
 
-type ApplicationRuntimeDirective uint8
+type ProbeIndex uint8
 
 const (
-	ApplicationRuntimeDirectiveTerm = iota + 1
-	ApplicationRuntimeDirectiveReload
-	ApplicationRuntimeDirectiveNothing
+	StartupProbeIndex ProbeIndex = iota
+	RedinessProbeIndex
+	LivenessProbeIndex
 )
 
 const (
-	UnitNameLiveness = "liveness_checker_unit"
-	UnitNameRediness = "rediness_checker_unit"
-	UnitNameStartup  = "startup_checker_unit"
+	ProbeNameUnsupported = "unsupported_checker_unit"
+	ProbeNameStartup     = "startup_checker_unit"
+	ProbeNameRediness    = "rediness_checker_unit"
+	ProbeNameLiveness    = "liveness_checker_unit"
 )
+
+func (i *ProbeIndex) String() string {
+	switch *i {
+	case StartupProbeIndex:
+		return ProbeNameStartup
+	case RedinessProbeIndex:
+		return ProbeNameRediness
+	case LivenessProbeIndex:
+		return ProbeNameLiveness
+	default:
+		return ProbeNameUnsupported
+	}
+}
 
 // easyjson:json
 type Status struct {
-	IsHealed  bool                        `json:"is_healed"`
-	Directive ApplicationRuntimeDirective `json:"directive"`
-	Message   string                      `json:"message"`
-	Error     error                       `json:"error,omitempty"`
+	IsHealed bool   `json:"is_healed"`
+	Message  string `json:"message"`
+	Error    error  `json:"error,omitempty"`
 }

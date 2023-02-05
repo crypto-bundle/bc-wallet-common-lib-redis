@@ -8,7 +8,7 @@ import (
 
 type unitParamsService interface {
 	IsDebug() bool
-	GetUnitName() string
+	GetProbeName() string
 
 	GetHTTPListenAddress() string
 	GetHTTPHandlerPath() string
@@ -16,8 +16,17 @@ type unitParamsService interface {
 	GetHTTPWriteTimeout() time.Duration
 }
 
+type configService interface {
+	GetLivenessParams() unitParamsService
+	GetReadinessParams() unitParamsService
+	GetStartupParams() unitParamsService
+}
+
 type probeService interface {
 	Do(ctx context.Context) Status
+	Init(ctx context.Context) error
+	Shutdown(ctx context.Context) error
+	ListenAndServe(ctx context.Context) error
 }
 
 type handlerService interface {
