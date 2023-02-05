@@ -1,21 +1,25 @@
 package healthcheck
 
-import (
-	"context"
+//go:generate easyjson types.go
+
+type ApplicationRuntimeDirective uint8
+
+const (
+	ApplicationRuntimeDirectiveTerm = iota + 1
+	ApplicationRuntimeDirectiveReload
+	ApplicationRuntimeDirectiveNothing
 )
 
-type config interface {
-	IsDebug() bool
-	GetAddress() string
-	GetLivenessPath() string
-	GetReadinessPath() string
-	GetStartupPath() string
-}
+const (
+	UnitNameLiveness = "liveness_checker_unit"
+	UnitNameRediness = "rediness_checker_unit"
+	UnitNameStartup  = "startup_checker_unit"
+)
 
-type Probe interface {
-	Do(ctx context.Context) error
-}
-
-type HealthcheckService interface {
-	Init() error
+// easyjson:json
+type Status struct {
+	IsHealed  bool                        `json:"is_healed"`
+	Directive ApplicationRuntimeDirective `json:"directive"`
+	Message   string                      `json:"message"`
+	Error     error                       `json:"error,omitempty"`
 }
