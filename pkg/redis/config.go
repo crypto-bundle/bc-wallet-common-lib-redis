@@ -2,13 +2,10 @@ package redis
 
 import (
 	"fmt"
-	"github.com/kelseyhightower/envconfig"
 	"time"
 )
 
-const ConfigPrefix = "REDIS"
-
-type RedisConfig struct {
+type Config struct {
 	Host     string `envconfig:"REDIS_HOST" json:"-"`
 	Port     uint16 `envconfig:"REDIS_PORT" json:"-"`
 	User     string `envconfig:"REDIS_USER" json:"REDIS_USER"`
@@ -51,35 +48,35 @@ type RedisConfig struct {
 	DialTimeout time.Duration `envconfig:"REDIS_DIAL_TIMEOUT" default:"5s" json:"-"`
 }
 
-func (c *RedisConfig) Prepare() error {
-	err := envconfig.Process(ConfigPrefix, c)
-	if err != nil {
-		return err
-	}
-
+// Prepare variables to static configuration
+func (c *Config) Prepare() error {
 	return nil
 }
 
-func (c *RedisConfig) GetRedisHost() string {
+func (c *Config) PrepareWith(cfgSrvList ...interface{}) error {
+	return nil
+}
+
+func (c *Config) GetRedisHost() string {
 	return c.Host
 }
 
-func (c *RedisConfig) GetRedisPort() uint16 {
+func (c *Config) GetRedisPort() uint16 {
 	return c.Port
 }
 
-func (c *RedisConfig) GetRedisAddress() string {
+func (c *Config) GetRedisAddress() string {
 	return fmt.Sprintf("%s:%d", c.Host, c.Port)
 }
 
-func (c *RedisConfig) GetRedisDbName() int {
+func (c *Config) GetRedisDbName() int {
 	return c.Database
 }
 
-func (c *RedisConfig) GetRedisUser() string {
+func (c *Config) GetRedisUser() string {
 	return c.User
 }
 
-func (c *RedisConfig) GetRedisPassword() string {
+func (c *Config) GetRedisPassword() string {
 	return c.Password
 }
