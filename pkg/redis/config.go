@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type Config struct {
+type RedisConfig struct {
 	Host     string `envconfig:"REDIS_HOST" json:"-"`
 	Port     uint16 `envconfig:"REDIS_PORT" json:"-"`
 	User     string `envconfig:"REDIS_USER" json:"REDIS_USER"`
@@ -49,34 +49,34 @@ type Config struct {
 }
 
 // Prepare variables to static configuration
-func (c *Config) Prepare() error {
+func (c *RedisConfig) Prepare() error {
 	return nil
 }
 
-func (c *Config) PrepareWith(cfgSrvList ...interface{}) error {
+func (c *RedisConfig) PrepareWith(cfgSrvList ...interface{}) error {
 	return nil
 }
 
-func (c *Config) GetRedisHost() string {
+func (c *RedisConfig) GetRedisHost() string {
 	return c.Host
 }
 
-func (c *Config) GetRedisPort() uint16 {
+func (c *RedisConfig) GetRedisPort() uint16 {
 	return c.Port
 }
 
-func (c *Config) GetRedisAddress() string {
+func (c *RedisConfig) GetRedisAddress() string {
 	return fmt.Sprintf("%s:%d", c.Host, c.Port)
 }
 
-func (c *Config) GetRedisDbName() int {
+func (c *RedisConfig) GetRedisDbName() int {
 	return c.Database
 }
 
-func (c *Config) GetRedisUser() string {
+func (c *RedisConfig) GetRedisUser() string {
 	return c.User
 }
 
-func (c *Config) GetRedisPassword() string {
+func (c *RedisConfig) GetRedisPassword() string {
 	return c.Password
 }

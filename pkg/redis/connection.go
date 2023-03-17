@@ -10,7 +10,7 @@ import (
 )
 
 type ConnectionParams struct {
-	*Config
+	*RedisConfig
 
 	sslMode string
 
@@ -105,12 +105,12 @@ func prepareClient(params *ConnectionParams) (*redis.Client, error) {
 }
 
 // NewConnection to redis server
-func NewConnection(ctx context.Context, cfg *Config, logger *zap.Logger) *Connection {
+func NewConnection(ctx context.Context, cfg *RedisConfig, logger *zap.Logger) *Connection {
 	conn := &Connection{
 		params: &ConnectionParams{
-			Config:  cfg,
-			sslMode: "",
-			debug:   false,
+			RedisConfig: cfg,
+			sslMode:     "",
+			debug:       false,
 		},
 		logger: logger,
 		client: nil,
