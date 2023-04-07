@@ -10,7 +10,7 @@ import (
 )
 
 type ConnectionParams struct {
-	*RedisConfig
+	redisConfigService
 
 	sslMode string
 
@@ -40,7 +40,7 @@ func (c *Connection) Close() error {
 // Connect to postgres database
 func (c *Connection) Connect(ctx context.Context) (*Connection, error) {
 	retryDecValue := uint8(1)
-	retryCount := c.params.RetryConnCount
+	retryCount := c.params.GetRetryConnCount()
 	if retryCount == 0 {
 		retryDecValue = 0
 		retryCount = 1
@@ -53,7 +53,7 @@ func (c *Connection) Connect(ctx context.Context) (*Connection, error) {
 			c.logger.Error("unable to prepare redis client. reconnecting...",
 				zap.Error(err), zap.Int("iteration", try))
 			try++
-			time.Sleep(c.params.RetryConnTimeOut)
+			time.Sleep(c.params.GetRetryConnTimeOut())
 
 			continue
 		}
@@ -64,7 +64,7 @@ func (c *Connection) Connect(ctx context.Context) (*Connection, error) {
 				zap.Error(err), zap.Int("iteration", try),
 				zap.Any("params", c.params))
 			try++
-			time.Sleep(c.params.RetryConnTimeOut)
+			time.Sleep(c.params.GetRetryConnTimeOut())
 
 			continue
 		}
@@ -84,18 +84,18 @@ func prepareClient(params *ConnectionParams) (*redis.Client, error) {
 		Username:           params.GetRedisUser(),
 		Password:           params.GetRedisPassword(),
 		DB:                 params.GetRedisDbName(),
-		MaxRetries:         int(params.MaxRetryCount),
+		MaxRetries:         int(params.GetMaxRetryCount()),
 		MinRetryBackoff:    -1,
 		MaxRetryBackoff:    -1,
-		DialTimeout:        params.DialTimeout,
-		ReadTimeout:        params.ReadTimeOut,
-		WriteTimeout:       params.WriteTimeOut,
+		DialTimeout:        params.GetDialTimeout(),
+		ReadTimeout:        params.GetReadTimeOut(),
+		WriteTimeout:       params.GetWriteTimeOut(),
 		PoolFIFO:           true,
-		PoolSize:           int(params.PoolSize),
-		MinIdleConns:       int(params.MinIdleConn),
-		MaxConnAge:         params.MaxConnectionAge,
-		PoolTimeout:        params.PoolTimeout,
-		IdleTimeout:        params.IdleTimeout,
+		PoolSize:           int(params.GetPoolSize()),
+		MinIdleConns:       int(params.GetMinIdleConn()),
+		MaxConnAge:         params.GetMaxConnectionAge(),
+		PoolTimeout:        params.GetPoolTimeout(),
+		IdleTimeout:        params.GetIdleTimeout(),
 		IdleCheckFrequency: time.Second * 60,
 		TLSConfig:          nil,
 		Limiter:            nil,
@@ -105,12 +105,12 @@ func prepareClient(params *ConnectionParams) (*redis.Client, error) {
 }
 
 // NewConnection to redis server
-func NewConnection(ctx context.Context, cfg *RedisConfig, logger *zap.Logger) *Connection {
+func NewConnection(_ context.Context, cfg redisConfigService, logger *zap.Logger) *Connection {
 	conn := &Connection{
 		params: &ConnectionParams{
-			RedisConfig: cfg,
-			sslMode:     "",
-			debug:       false,
+			redisConfigService: cfg,
+			sslMode:            "",
+			debug:              false,
 		},
 		logger: logger,
 		client: nil,
