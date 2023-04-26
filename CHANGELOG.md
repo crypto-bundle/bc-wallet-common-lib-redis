@@ -5,7 +5,7 @@
 ### Changed
 
 #### Switching to a proprietary license.
-License of **bc-wallet-common-lib-redis** repository changed to proprietary.
+License of **bc-wallet-common-lib-redis** repository changed to proprietary - commit revision number **a31cdd48a50a748398b04e72129e06600af403aa**.
 Origin repository - [crypto-bundle bc-wallet-common-lib-redis](https://github.com/crypto-bundle/bc-wallet-common-lib-redis)
 
 The MIT license is replaced by me (_Kotelnikov Aleksei_) as an author and maintainer.
