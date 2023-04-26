@@ -81,6 +81,8 @@ func main() {
 
 * Author and maintainer - [@gudron (Alex V Kotelnikov)](https://github.com/gudron)
 
+## Licence
+
 **bc-wallet-common-lib-redis** has a proprietary license.
 
 Switched to proprietary license from MIT - [CHANGELOG.MD - v0.0.5](./CHANGELOG.md)
