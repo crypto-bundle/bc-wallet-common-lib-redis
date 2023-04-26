@@ -19,10 +19,11 @@ package main
 
 import (
 	"context"
-	commonEnvConfig "github.com/crypto-bundle/bc-wallet-common-lib-config/pkg/envconfig"
-	commonRedis "github.com/crypto-bundle/bc-wallet-common-lib-postgres/pkg/redis"
-	commonVault "github.com/crypto-bundle/bc-wallet-common-lib-vault/pkg/vault"
-	commonVaultTokenClient "github.com/crypto-bundle/bc-wallet-common-lib-vault/pkg/vault/client/token"
+	
+	commonEnvConfig "gitlab.heronodes.io/bc-platform/bc-wallet-common-lib-config/pkg/envconfig"
+	commonRedis "gitlab.heronodes.io/bc-platform/bc-wallet-common-lib-postgres/pkg/redis"
+	commonVault "gitlab.heronodes.io/bc-platform/bc-wallet-common-lib-vault/pkg/vault"
+	commonVaultTokenClient "gitlab.heronodes.io/bc-platform/bc-wallet-common-lib-vault/pkg/vault/client/token"
 )
 
 type VaultWrappedConfig struct {
@@ -80,6 +81,6 @@ func main() {
 
 * Author and maintainer - [@gudron (Alex V Kotelnikov)](https://github.com/gudron)
 
-## Licence
+**bc-wallet-common-lib-redis** has a proprietary license.
 
-**bc-wallet-common-lib-redis** is licensed under the [MIT](./LICENSE) License.
+Switched to proprietary license from MIT - [CHANGELOG.MD - v0.0.5](./CHANGELOG.md)
