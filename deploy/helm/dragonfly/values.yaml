@@ -85,7 +85,7 @@ prometheusRule:
 
 storage:
   # -- If /data should persist. This will provision a StatefulSet instead.
-  enabled: false
+  enabled: true
   # -- Global StorageClass for Persistent Volume(s)
   storageClassName: ""
   # -- Volume size to request for the PVC
