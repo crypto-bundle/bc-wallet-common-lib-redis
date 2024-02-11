@@ -19,7 +19,8 @@ package main
 
 import (
 	"context"
-	commonEnvConfig "github.com/crypto-bundle/bc-wallet-common-lib-config/pkg/envconfig"
+
+	commonEnvConfig "github.com/crypto-bundle/bc-wallet-common-lib-configs/pkg/envconfig"
 	commonRedis "github.com/crypto-bundle/bc-wallet-common-lib-postgres/pkg/redis"
 	commonVault "github.com/crypto-bundle/bc-wallet-common-lib-vault/pkg/vault"
 	commonVaultTokenClient "github.com/crypto-bundle/bc-wallet-common-lib-vault/pkg/vault/client/token"
@@ -82,4 +83,4 @@ func main() {
 
 ## Licence
 
-**bc-wallet-common-lib-redis** is licensed under the [MIT](./LICENSE) License.
+**bc-wallet-common-lib-postgres** is licensed under the [MIT](./LICENSE) License.
