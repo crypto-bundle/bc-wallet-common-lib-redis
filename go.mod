@@ -1,4 +1,4 @@
-module gitlab.heronodes.io/bc-platform/bc-wallet-common-lib-redis
+module github.com/crypto-bundle/bc-wallet-common-lib-redis
 
 go 1.19
 

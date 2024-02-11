@@ -1,25 +1,23 @@
 # Change Log
 
-## [v0.0.5] - 26.04.2023 13:20 MSK
+## [v0.0.1] - 31.04.2022 20:42 MSK
+### Added
+* Connection config
+* Connection wrapper with client option preparation flow
 
+## [v0.0.2] - 17.03.2023 16:35 MSK
 ### Changed
+* Lib-redis moved to another repository - https://github.com/crypto-bundle/bc-wallet-common-lib-redis
 
-#### Switching to a proprietary license.
-License of **bc-wallet-common-lib-redis** repository changed to proprietary - commit revision number **a31cdd48a50a748398b04e72129e06600af403aa**.
-Origin repository - [crypto-bundle bc-wallet-common-lib-redis](https://github.com/crypto-bundle/bc-wallet-common-lib-redis)
-
-The MIT license is replaced by me (_Kotelnikov Aleksei_) as an author and maintainer.
-
-The license has been replaced with a proprietary one, with the condition of maintaining the authorship
-and specifying in the README.md file in the section of authors and contributors.
-
-[@gudron (Kotelnikov Aleksei)](https://github.com/gudron) - author and maintainer of [crypto-bundle project](https://github.com/crypto-bundle)
-
-
-The commit is signed with the key -
-gudron2s@gmail.com
-E456BB23A18A9347E952DBC6655133DD561BF3EC
-
-## [v0.0.6] - 09.05.2023
+## [v0.0.3] - 07.04.2023 18:49 MSK
 ### Changed
+* Changed redis client config
+  * Added supporting of _secret_ tags for lib-config
+  * Small refactoring for using config interface implementation
+
+## [v0.0.4] - 09.05.2023
+### Added
 * Added Dragonfly helm-chart for local development. Chart cloned from [official Dragonfly repository](https://github.com/dragonflydb/dragonfly/tree/main/contrib/charts/dragonfly)
+### Changed
+* Changed content of license file - MIT license
+* Changed go-namespace
