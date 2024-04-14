@@ -24,6 +24,17 @@ type Connection struct {
 	client *redis.Client
 }
 
+func (c *Connection) IsHealed(ctx context.Context) bool {
+	statusCmd := c.client.Ping(ctx)
+
+	res, err := statusCmd.Result()
+	if err != nil {
+		return false
+	}
+
+	return res == "PONG"
+}
+
 func (c *Connection) GetClient() *redis.Client {
 	return c.client
 }
