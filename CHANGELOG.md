@@ -21,3 +21,7 @@
 ### Changed
 * Changed content of license file - MIT license
 * Changed go-namespace
+
+## [v0.0.5] - 14.04.2024
+### Added
+* Added support of healthcheck flow, which required by [lib-healthcheck](https://github.com/crypto-bundle/bc-wallet-common-lib-healthcheck)
