@@ -25,3 +25,7 @@
 ## [v0.0.5] - 14.04.2024
 ### Added
 * Added support of healthcheck flow, which required by [lib-healthcheck](https://github.com/crypto-bundle/bc-wallet-common-lib-healthcheck)
+
+## [v0.0.6] - 17.04.2024
+### Changed
+* Bump golang version 1.19 -> 1.22
