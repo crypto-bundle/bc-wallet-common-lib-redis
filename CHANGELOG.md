@@ -26,6 +26,9 @@
 ### Added
 * Added support of healthcheck flow, which required by [lib-healthcheck](https://github.com/crypto-bundle/bc-wallet-common-lib-healthcheck)
 
-## [v0.0.6] - 17.04.2024
+## [v0.0.6, v0.0.7] - 17.04.2024
 ### Changed
 * Bump golang version 1.19 -> 1.22
+* Changed env variables name for supporting kubernetes naming standard:
+  * REDIS_HOST -> REDIS_SERVICE_HOST
+  * REDIS_PORT -> REDIS_SERVICE_PORT

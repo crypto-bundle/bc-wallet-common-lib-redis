@@ -6,8 +6,8 @@ import (
 )
 
 type RedisConfig struct {
-	Host     string `envconfig:"REDIS_HOST" default:"redis.local"`
-	Port     uint16 `envconfig:"REDIS_PORT" default:"6380"`
+	Host     string `envconfig:"REDIS_SERVICE_HOST" default:"redis.local"`
+	Port     uint16 `envconfig:"REDIS_SERVICE_PORT" default:"6380"`
 	User     string `envconfig:"REDIS_USER" secret:"true" required:"true"`
 	Password string `envconfig:"REDIS_PASSWORD" secret:"true" required:"true"`
 	Database int    `envconfig:"REDIS_DB" default:"1"`
