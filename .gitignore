@@ -16,7 +16,8 @@ env-*.env
 .idea
 
 # Dependency directories (remove the comment below to include it)
-vendor/
+vendor/*
 
 deploy/helm/*/values_local.yaml
+deploy/helm/redis/bitnami/redis/chars/*
 deploy/helm/redis/bitnami/redis/values_local.yaml
