@@ -1,6 +1,6 @@
 module github.com/crypto-bundle/bc-wallet-common-lib-redis
 
-go 1.22
+go 1.23
 
 require (
 	github.com/go-redis/redis/v8 v8.11.5
