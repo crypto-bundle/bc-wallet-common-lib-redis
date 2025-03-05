@@ -19,5 +19,5 @@ env-*.env
 vendor/*
 
 deploy/helm/*/values_local.yaml
-deploy/helm/redis/bitnami/redis/chars/*
+deploy/helm/redis/bitnami/redis/charts/*
 deploy/helm/redis/bitnami/redis/values_local.yaml
