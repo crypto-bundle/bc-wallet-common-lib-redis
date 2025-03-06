@@ -32,11 +32,10 @@ package redis
 
 import (
 	"context"
+	"log/slog"
 	"time"
 
 	"github.com/go-redis/redis/v8"
-
-	"go.uber.org/zap"
 )
 
 type ConnectionParams struct {
@@ -49,7 +48,7 @@ type ConnectionParams struct {
 
 type Connection struct {
 	params *ConnectionParams
-	logger *zap.Logger
+	logger *slog.Logger
 
 	client *redis.Client
 }
@@ -86,14 +85,17 @@ func (c *Connection) Connect(ctx context.Context) (*Connection, error) {
 		retryDecValue = 0
 		retryCount = 1
 	}
+
 	try := 0
 
 	for i := retryCount; i != 0; i -= retryDecValue {
 		client, err := prepareClient(c.params)
 		if err != nil {
 			c.logger.Error("unable to prepare redis client. reconnecting...",
-				zap.Error(err), zap.Int("iteration", try))
+				err, slog.Int("iteration", try))
+
 			try++
+
 			time.Sleep(c.params.GetRetryConnTimeOut())
 
 			continue
@@ -101,10 +103,12 @@ func (c *Connection) Connect(ctx context.Context) (*Connection, error) {
 
 		_, err = client.Ping(ctx).Result()
 		if err != nil {
-			c.logger.Error("unable ping redis. reconnecting...",
-				zap.Error(err), zap.Int("iteration", try),
-				zap.Any("params", c.params))
+			c.logger.Error("unable ping redis. reconnecting...", err,
+				slog.Int("iteration", try),
+				slog.Any("params", c.params))
+
 			try++
+
 			time.Sleep(c.params.GetRetryConnTimeOut())
 
 			continue
@@ -146,14 +150,16 @@ func prepareClient(params *ConnectionParams) (*redis.Client, error) {
 }
 
 // NewConnection to redis server
-func NewConnection(_ context.Context, cfg redisConfigService, logger *zap.Logger) *Connection {
+func NewConnection(logBuilder loggerFabricService,
+	cfg redisConfigService,
+) *Connection {
 	conn := &Connection{
 		params: &ConnectionParams{
 			redisConfigService: cfg,
 			sslMode:            "",
 			debug:              false,
 		},
-		logger: logger,
+		logger: logBuilder.NewSlogNamedLoggerEntry(redisNameSpace),
 		client: nil,
 	}
 
