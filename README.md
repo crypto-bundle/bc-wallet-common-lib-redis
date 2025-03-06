@@ -83,4 +83,6 @@ func main() {
 
 ## Licence
 
-**bc-wallet-common-lib-postgres** is licensed under the [MIT](./LICENSE) License.
+* **bc-wallet-common-lib-redis** is licensed under the [MIT NON-AI](./LICENSE) License.
+* **bitnami redis helm chart** licensed under the [Apache License, Version 2.0.](./deploy/helm/redis/LICENSE.md)
+* **dragonflyDb helm chart** licensed under the [Dragonfly Business Source License 1.1](./deploy/helm/dragonfly/LICENSE.md)
