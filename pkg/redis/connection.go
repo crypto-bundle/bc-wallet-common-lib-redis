@@ -47,8 +47,10 @@ type ConnectionParams struct {
 }
 
 type Connection struct {
+	l *slog.Logger
+	e errorFormatterService
+
 	params *ConnectionParams
-	logger *slog.Logger
 
 	client *redis.Client
 }
@@ -71,7 +73,7 @@ func (c *Connection) GetClient() *redis.Client {
 func (c *Connection) Close() error {
 	err := c.client.Close()
 	if err != nil {
-		return err
+		return c.e.ErrorOnly(err)
 	}
 
 	return nil
@@ -91,7 +93,7 @@ func (c *Connection) Connect(ctx context.Context) (*Connection, error) {
 	for i := retryCount; i != 0; i -= retryDecValue {
 		client, err := prepareClient(c.params)
 		if err != nil {
-			c.logger.Error("unable to prepare redis client. reconnecting...",
+			c.l.Error("unable to prepare redis client. reconnecting...",
 				err, slog.Int("iteration", try))
 
 			try++
@@ -103,7 +105,7 @@ func (c *Connection) Connect(ctx context.Context) (*Connection, error) {
 
 		_, err = client.Ping(ctx).Result()
 		if err != nil {
-			c.logger.Error("unable ping redis. reconnecting...", err,
+			c.l.Error("unable ping redis. reconnecting...", err,
 				slog.Int("iteration", try),
 				slog.Any("params", c.params))
 
@@ -151,15 +153,17 @@ func prepareClient(params *ConnectionParams) (*redis.Client, error) {
 
 // NewConnection to redis server
 func NewConnection(logBuilder loggerFabricService,
+	errFmtSvc errorFormatterService,
 	cfg redisConfigService,
 ) *Connection {
 	conn := &Connection{
+		l: logBuilder.NewSlogNamedLoggerEntry(redisNameSpace),
+		e: errFmtSvc,
 		params: &ConnectionParams{
 			redisConfigService: cfg,
 			sslMode:            "",
 			debug:              false,
 		},
-		logger: logBuilder.NewSlogNamedLoggerEntry(redisNameSpace),
 		client: nil,
 	}
 

@@ -1,5 +1,9 @@
 # Change Log
 
+## [v0.0.10] - 06.03.2025
+### Changed
+* Added support of lib-errors/lib-tinyerrors
+
 ## [v0.0.9] - 06.03.2025
 ### Changed
 * Removed zap.Logger dependency - migrated to slog.Logger
