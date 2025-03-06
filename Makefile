@@ -1,3 +1,6 @@
+lint:
+	golangci-lint run --config .golangci.yml -v ./...
+
 deploy_dragonfly:
 	$(if $(and $(env),$(repository)),,$(error 'env' and/or 'repository' is not defined))
 
