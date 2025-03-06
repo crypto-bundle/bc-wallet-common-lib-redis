@@ -1,5 +1,9 @@
 # Change Log
 
+## [v0.0.9] - 06.03.2025
+### Changed
+* Removed zap.Logger dependency - migrated to slog.Logger
+
 ## [v0.0.8] - 06.03.2025
 ### Changed
 * Added support of Go 1.23
