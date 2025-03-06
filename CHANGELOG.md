@@ -7,6 +7,8 @@
   * Copyright - new year 2025
   * MIT -> MIT NON-AI
   * Added License banner to *.go files
+  * Added License of Bitnami Redis Helm Chart
+  * Added License of DragonflyDB Helm Chart
 
 ## [v0.0.6, v0.0.7] - 17.04.2024
 ### Changed
