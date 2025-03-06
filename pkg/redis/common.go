@@ -39,7 +39,7 @@ type redisConfigService interface {
 	GetRedisHost() string
 	GetRedisPort() uint16
 	GetRedisAddress() string
-	GetRedisDbName() int
+	GetRedisDBName() int
 	GetRedisUser() string
 	GetRedisPassword() string
 

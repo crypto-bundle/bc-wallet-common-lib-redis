@@ -3,6 +3,7 @@
 ## [v0.0.10] - 06.03.2025
 ### Changed
 * Added support of lib-errors/lib-tinyerrors
+* Added linter and fixed up all linter issues
 
 ## [v0.0.9] - 06.03.2025
 ### Changed

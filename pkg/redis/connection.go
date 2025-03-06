@@ -79,10 +79,11 @@ func (c *Connection) Close() error {
 	return nil
 }
 
-// Connect to postgres database
+// Connect to redis cache storage...
 func (c *Connection) Connect(ctx context.Context) (*Connection, error) {
 	retryDecValue := uint8(1)
 	retryCount := c.params.GetRetryConnCount()
+
 	if retryCount == 0 {
 		retryDecValue = 0
 		retryCount = 1
@@ -91,21 +92,11 @@ func (c *Connection) Connect(ctx context.Context) (*Connection, error) {
 	try := 0
 
 	for i := retryCount; i != 0; i -= retryDecValue {
-		client, err := prepareClient(c.params)
+		client := prepareClient(c.params)
+
+		_, err := client.Ping(ctx).Result()
 		if err != nil {
-			c.l.Error("unable to prepare redis client. reconnecting...",
-				err, slog.Int("iteration", try))
-
-			try++
-
-			time.Sleep(c.params.GetRetryConnTimeOut())
-
-			continue
-		}
-
-		_, err = client.Ping(ctx).Result()
-		if err != nil {
-			c.l.Error("unable ping redis. reconnecting...", err,
+			c.l.Error("unable ping redis. reconnecting...", slog.Any("error", err),
 				slog.Int("iteration", try),
 				slog.Any("params", c.params))
 
@@ -117,20 +108,21 @@ func (c *Connection) Connect(ctx context.Context) (*Connection, error) {
 		}
 
 		c.client = client
+
 		return c, nil
 	}
 
 	return c, nil
 }
 
-func prepareClient(params *ConnectionParams) (*redis.Client, error) {
+func prepareClient(params *ConnectionParams) *redis.Client {
 	client := redis.NewClient(&redis.Options{
 		Addr:               params.GetRedisAddress(),
 		Dialer:             nil,
 		OnConnect:          nil,
 		Username:           params.GetRedisUser(),
 		Password:           params.GetRedisPassword(),
-		DB:                 params.GetRedisDbName(),
+		DB:                 params.GetRedisDBName(),
 		MaxRetries:         int(params.GetMaxRetryCount()),
 		MinRetryBackoff:    -1,
 		MaxRetryBackoff:    -1,
@@ -143,15 +135,16 @@ func prepareClient(params *ConnectionParams) (*redis.Client, error) {
 		MaxConnAge:         params.GetMaxConnectionAge(),
 		PoolTimeout:        params.GetPoolTimeout(),
 		IdleTimeout:        params.GetIdleTimeout(),
-		IdleCheckFrequency: time.Second * 60,
+		IdleCheckFrequency: time.Minute,
 		TLSConfig:          nil,
 		Limiter:            nil,
+		Network:            "",
 	})
 
-	return client, nil
+	return client
 }
 
-// NewConnection to redis server
+// NewConnection to redis server...
 func NewConnection(logBuilder loggerFabricService,
 	errFmtSvc errorFormatterService,
 	cfg redisConfigService,
